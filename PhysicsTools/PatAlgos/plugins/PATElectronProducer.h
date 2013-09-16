@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.h,v 1.25 2011/03/31 09:52:39 namapane Exp $
+// $Id: PATElectronProducer.h,v 1.25.6.5 2013/04/15 09:17:13 tjkim Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATElectronProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of reco::GsfElectron.
 
   \author   Steven Lowette, James Lamb\
-  \version  $Id: PATElectronProducer.h,v 1.25 2011/03/31 09:52:39 namapane Exp $
+  \version  $Id: PATElectronProducer.h,v 1.25.6.5 2013/04/15 09:17:13 tjkim Exp $
 */
 
 
@@ -37,9 +37,10 @@
 #include "PhysicsTools/PatAlgos/interface/PATUserDataHelper.h"
 
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
-
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+
+#include "Geometry/CaloTopology/interface/CaloSubdetectorTopology.h"
 
 #include <string>
 
@@ -70,16 +71,29 @@ namespace pat {
       bool          embedGsfElectronCore_;
       bool          embedGsfTrack_;
       bool          embedSuperCluster_;
+      bool          embedPflowSuperCluster_;
+      bool          embedSeedCluster_;
+      bool          embedBasicClusters_;
+      bool          embedPreshowerClusters_;
+      bool          embedPflowBasicClusters_;
+      bool          embedPflowPreshowerClusters_;
       bool          embedTrack_;
       bool          addGenMatch_;
       bool          embedGenMatch_;
+      bool          embedRecHits_;
+      
       std::vector<edm::InputTag> genMatchSrc_;
 
       /// pflow specific
       bool          useParticleFlow_;
       edm::InputTag pfElecSrc_;
+      edm::InputTag pfCandidateMap_;
       bool          embedPFCandidate_;
 
+      /// mva input variables
+      edm::InputTag reducedBarrelRecHitCollection_;
+      edm::InputTag reducedEndcapRecHitCollection_;
+ 
       /// embed high level selection variables?
       bool          embedHighLevelSelection_;
       edm::InputTag beamLineSrc_;
@@ -98,7 +112,9 @@ namespace pat {
 			 const reco::CandidateBaseRef& baseRef,
 			 const GenAssociations& genMatches,
 			 const IsoDepositMaps& deposits,
-			 const IsolationValueMaps& isolationValues) const;
+                         const bool pfId,
+			 const IsolationValueMaps& isolationValues,
+                         const IsolationValueMaps& isolationValuesNoPFId) const;
 
       void fillElectron2( Electron& anElectron,
 			  const reco::CandidatePtr& candPtrForIsolation,
@@ -138,6 +154,7 @@ namespace pat {
       pat::helper::MultiIsolator::IsolationValuePairs isolatorTmpStorage_; // better here than recreate at each event
       IsolationLabels isoDepositLabels_;
       IsolationLabels isolationValueLabels_;
+      IsolationLabels isolationValueLabelsNoPFId_;
 
       bool addEfficiencies_;
       pat::helper::EfficiencyLoader efficiencyLoader_;
@@ -148,6 +165,7 @@ namespace pat {
       bool useUserData_;
       pat::PATUserDataHelper<pat::Electron>      userDataHelper_;
 
+      const CaloTopology * ecalTopology_;
 
   };
 
