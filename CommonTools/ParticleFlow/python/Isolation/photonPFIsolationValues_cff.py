@@ -2,82 +2,88 @@ import FWCore.ParameterSet.Config as cms
 
 
 
-phPFIsoValueCharged03 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueCharged03PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositCharged"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.0)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
             )
      )
 )
 
-phPFIsoValueChargedAll03 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueChargedAll03PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositChargedAll"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.0)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
      )
    )
 )
 
-phPFIsoValueGamma03 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueGamma03PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositGamma"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('EcalEndcaps:ConeVeto(0.07)','EcalBarrel:RectangularEtaPhiVeto(-0.015,0.015,-0.5,0.5)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
       )
    )
 )
 
-phPFIsoValueNeutral03 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueNeutral03PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositNeutral"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring(),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
+        )
     )
- )
 )
 
-phPFIsoValuePU03 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValuePU03PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositPU"),
             deltaR = cms.double(0.3),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
       )
    )
 )
 
 
 
-phPFIsoValueCharged04 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueCharged04PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositCharged"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.0)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
             )
      )
 )
@@ -85,69 +91,73 @@ phPFIsoValueCharged04 = cms.EDProducer("CandIsolatorFromDeposits",
 
 
 
-phPFIsoValueChargedAll04 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueChargedAll04PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositChargedAll"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.0)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
      )
    )
 )
 
-phPFIsoValueGamma04 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueGamma04PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositGamma"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('EcalEndcaps:ConeVeto(0.07)','EcalBarrel:RectangularEtaPhiVeto(-0.015,0.015,-0.5,0.5)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
       )
    )
 )
 
 
-phPFIsoValueNeutral04 = cms.EDProducer("CandIsolatorFromDeposits",
+phPFIsoValueNeutral04PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositNeutral"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring(),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
     )
  )
-
 )
-phPFIsoValuePU04 = cms.EDProducer("CandIsolatorFromDeposits",
+
+phPFIsoValuePU04PFId = cms.EDProducer("PFCandIsolatorFromDeposits",
     deposits = cms.VPSet(
             cms.PSet(
             src = cms.InputTag("phPFIsoDepositPU"),
             deltaR = cms.double(0.4),
             weight = cms.string('1'),
-            vetos = cms.vstring('Threshold(0.5)'),
+            vetos = cms.vstring('ConeVeto(0.02)'),
             skipDefaultVeto = cms.bool(True),
-            mode = cms.string('sum')
+            mode = cms.string('sum'),
+            PivotCoordinatesForEBEE = cms.bool(True)
       )
    )
 )
 
 photonPFIsolationValuesSequence = (
-    phPFIsoValueCharged03+
-    phPFIsoValueChargedAll03+
-    phPFIsoValueGamma03+
-    phPFIsoValueNeutral03+
-    phPFIsoValuePU03+
+    phPFIsoValueCharged03PFId+
+    phPFIsoValueChargedAll03PFId+
+    phPFIsoValueGamma03PFId+
+    phPFIsoValueNeutral03PFId+
+    phPFIsoValuePU03PFId+
     ############################## 
-    phPFIsoValueCharged04+
-    phPFIsoValueChargedAll04+
-    phPFIsoValueGamma04+
-    phPFIsoValueNeutral04+
-    phPFIsoValuePU04
+    phPFIsoValueCharged04PFId+
+    phPFIsoValueChargedAll04PFId+
+    phPFIsoValueGamma04PFId+
+    phPFIsoValueNeutral04PFId+
+    phPFIsoValuePU04PFId
     )
