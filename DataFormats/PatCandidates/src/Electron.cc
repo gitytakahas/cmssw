@@ -1,5 +1,5 @@
 //
-// $Id: Electron.cc,v 1.28 2012/01/30 22:25:48 rwolf Exp $
+// $Id: Electron.cc,v 1.33.2.1 2013/04/15 09:08:39 tjkim Exp $
 //
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -15,12 +15,25 @@ Electron::Electron() :
     embeddedGsfElectronCore_(false),
     embeddedGsfTrack_(false),
     embeddedSuperCluster_(false),
+    embeddedPflowSuperCluster_(false),
     embeddedTrack_(false),
+    embeddedSeedCluster_(false),
+    embeddedRecHits_(false),
     embeddedPFCandidate_(false),
     ecalDrivenMomentum_(Candidate::LorentzVector(0.,0.,0.,0.)),
     cachedDB_(false),
     dB_(0.0),
-    edB_(0.0)
+    edB_(0.0),   
+    ecalRegressionEnergy_(0.0),
+    ecalTrackRegressionEnergy_(0.0),
+    ecalRegressionError_(0.0),
+    ecalTrackRegressionError_(0.0),
+    ecalScale_(-99999.),
+    ecalSmear_(-99999.),
+    ecalRegressionScale_(-99999.),
+    ecalRegressionSmear_(-99999.),
+    ecalTrackRegressionScale_(-99999.),
+    ecalTrackRegressionSmear_(-99999.)
 {
   initImpactParameters();
 }
@@ -31,7 +44,10 @@ Electron::Electron(const reco::GsfElectron & anElectron) :
     embeddedGsfElectronCore_(false),
     embeddedGsfTrack_(false),
     embeddedSuperCluster_(false),
+    embeddedPflowSuperCluster_(false),
     embeddedTrack_(false),
+    embeddedSeedCluster_(false),
+    embeddedRecHits_(false),
     embeddedPFCandidate_(false),
     ecalDrivenMomentum_(anElectron.p4()),
     cachedDB_(false),
@@ -47,7 +63,10 @@ Electron::Electron(const edm::RefToBase<reco::GsfElectron> & anElectronRef) :
     embeddedGsfElectronCore_(false),
     embeddedGsfTrack_(false),
     embeddedSuperCluster_(false),
-    embeddedTrack_(false),
+    embeddedPflowSuperCluster_(false),
+    embeddedTrack_(false), 
+    embeddedSeedCluster_(false),
+    embeddedRecHits_(false),
     embeddedPFCandidate_(false),
     ecalDrivenMomentum_(anElectronRef->p4()),
     cachedDB_(false),
@@ -63,7 +82,10 @@ Electron::Electron(const edm::Ptr<reco::GsfElectron> & anElectronRef) :
     embeddedGsfElectronCore_(false),
     embeddedGsfTrack_(false),
     embeddedSuperCluster_(false),
+    embeddedPflowSuperCluster_(false),
     embeddedTrack_(false),
+    embeddedSeedCluster_(false),
+    embeddedRecHits_(false),
     embeddedPFCandidate_(false),
     ecalDrivenMomentum_(anElectronRef->p4()),
     cachedDB_(false),
@@ -133,6 +155,24 @@ reco::SuperClusterRef Electron::superCluster() const {
   }
 }
 
+/// override the reco::GsfElectron::pflowSuperCluster method, to access the internal storage of the supercluster
+reco::SuperClusterRef Electron::pflowSuperCluster() const {
+  if (embeddedPflowSuperCluster_) {
+    return reco::SuperClusterRef(&pflowSuperCluster_, 0);
+  } else {
+    return reco::GsfElectron::pflowSuperCluster();
+  }
+}
+
+/// direct access to the seed cluster
+reco::CaloClusterPtr Electron::seed() const {
+  if(embeddedSeedCluster_){
+    return reco::CaloClusterPtr(&seedCluster_,0);
+  } else {
+    return reco::GsfElectron::superCluster()->seed();
+  }
+}
+
 /// override the reco::GsfElectron::closestCtfTrack method, to access the internal storage of the track
 reco::TrackRef Electron::closestCtfTrackRef() const {
   if (embeddedTrack_) {
@@ -175,12 +215,86 @@ void Electron::embedSuperCluster() {
   }
 }
 
+/// Stores the electron's SuperCluster (reco::SuperClusterRef) internally
+void Electron::embedPflowSuperCluster() {
+  pflowSuperCluster_.clear();
+  if (reco::GsfElectron::pflowSuperCluster().isNonnull()) {
+      pflowSuperCluster_.push_back(*reco::GsfElectron::pflowSuperCluster());
+      embeddedPflowSuperCluster_ = true;
+  }
+}
+
+/// Stores the electron's SeedCluster (reco::BasicClusterPtr) internally
+void Electron::embedSeedCluster() {
+  seedCluster_.clear();
+  if (reco::GsfElectron::superCluster().isNonnull() && reco::GsfElectron::superCluster()->seed().isNonnull()) {
+    seedCluster_.push_back(*reco::GsfElectron::superCluster()->seed());
+    embeddedSeedCluster_ = true;
+  }
+}
+
+/// Stores the electron's BasicCluster (reco::CaloCluster) internally
+void Electron::embedBasicClusters() {
+  basicClusters_.clear();
+  if (reco::GsfElectron::superCluster().isNonnull()){
+    reco::CaloCluster_iterator itscl = reco::GsfElectron::superCluster()->clustersBegin();
+    reco::CaloCluster_iterator itsclE = reco::GsfElectron::superCluster()->clustersEnd();
+    for(;itscl!=itsclE;++itscl){
+      basicClusters_.push_back( **itscl ) ;
+    } 
+  }
+}
+
+/// Stores the electron's PreshowerCluster (reco::CaloCluster) internally
+void Electron::embedPreshowerClusters() {
+  preshowerClusters_.clear();
+  if (reco::GsfElectron::superCluster().isNonnull()){
+    reco::CaloCluster_iterator itscl = reco::GsfElectron::superCluster()->preshowerClustersBegin();
+    reco::CaloCluster_iterator itsclE = reco::GsfElectron::superCluster()->preshowerClustersEnd();
+    for(;itscl!=itsclE;++itscl){
+      preshowerClusters_.push_back( **itscl ) ;
+    }
+  }
+}
+
+/// Stores the electron's PflowBasicCluster (reco::CaloCluster) internally
+void Electron::embedPflowBasicClusters() {
+  pflowBasicClusters_.clear();
+  if (reco::GsfElectron::pflowSuperCluster().isNonnull()){
+    reco::CaloCluster_iterator itscl = reco::GsfElectron::pflowSuperCluster()->clustersBegin();
+    reco::CaloCluster_iterator itsclE = reco::GsfElectron::pflowSuperCluster()->clustersEnd();
+    for(;itscl!=itsclE;++itscl){
+      pflowBasicClusters_.push_back( **itscl ) ;
+    }
+  }
+}
+
+/// Stores the electron's PflowPreshowerCluster (reco::CaloCluster) internally
+void Electron::embedPflowPreshowerClusters() {
+  pflowPreshowerClusters_.clear();
+  if (reco::GsfElectron::pflowSuperCluster().isNonnull()){
+    reco::CaloCluster_iterator itscl = reco::GsfElectron::pflowSuperCluster()->preshowerClustersBegin();
+    reco::CaloCluster_iterator itsclE = reco::GsfElectron::pflowSuperCluster()->preshowerClustersEnd();
+    for(;itscl!=itsclE;++itscl){
+      pflowPreshowerClusters_.push_back( **itscl ) ;
+    }
+  }
+}
+
 /// method to store the electron's track internally
 void Electron::embedTrack() {
   track_.clear();
   if (reco::GsfElectron::closestCtfTrackRef().isNonnull()) {
       track_.push_back(*reco::GsfElectron::closestCtfTrackRef());
       embeddedTrack_ = true;
+  }
+}
+
+// method to store the RecHits internally
+void Electron::embedRecHits(const EcalRecHitCollection * rechits) {
+  if (rechits!=0) {
+    recHits_ = *rechits;
+    embeddedRecHits_ = true;
   }
 }
 
@@ -198,7 +312,7 @@ void Electron::embedTrack() {
 /// https://twiki.cern.ch/twiki/bin/view/CMS/SimpleCutBasedEleID
 /// https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCategoryBasedElectronID
 /// Note: an exception is thrown if the specified ID is not available
-float Electron::electronID(const std::string & name) const {
+float Electron::electronID(const std::string& name) const {
     for (std::vector<IdPair>::const_iterator it = electronIDs_.begin(), ed = electronIDs_.end(); it != ed; ++it) {
         if (it->first == name) return it->second;
     }
@@ -213,7 +327,7 @@ float Electron::electronID(const std::string & name) const {
 }
 
 /// Checks if a specific electron ID is associated to the pat::Electron.
-bool Electron::isElectronIDAvailable(const std::string & name) const {
+bool Electron::isElectronIDAvailable(const std::string& name) const {
     for (std::vector<IdPair>::const_iterator it = electronIDs_.begin(), ed = electronIDs_.end(); it != ed; ++it) {
         if (it->first == name) return true;
     }
@@ -317,4 +431,11 @@ void Electron::setDB(double dB, double edB, IpType type){
     cachedIP_[type] = true;
   }
 }
- 
+
+/// Set additional missing mva input variables for new mva ID : 14/04/2012 
+void Electron::setMvaVariables( double r9, double sigmaIphiIphi, double sigmaIetaIphi, double ip3d){
+  r9_ = r9;
+  sigmaIphiIphi_ = sigmaIphiIphi;
+  sigmaIetaIphi_ = sigmaIetaIphi;
+  ip3d_ = ip3d;
+} 
