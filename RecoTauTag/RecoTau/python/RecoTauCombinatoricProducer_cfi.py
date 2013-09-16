@@ -1,5 +1,7 @@
+
 import FWCore.ParameterSet.Config as cms
 from RecoTauTag.RecoTau.PFRecoTauQualityCuts_cfi import PFTauQualityCuts
+from RecoTauTag.RecoTau.RecoTauEnergyRecoveryPlugin2_cfi import pfTauEnergyRecoveryPlugin2
 
 '''
 
@@ -108,5 +110,11 @@ combinatoricRecoTaus = cms.EDProducer(
             maximumForElectrionPreIDOutput       = cms.double(-0.1),
             DataType = cms.string("AOD"),
         ),
+        # Tau energy recovery algorithm
+        cms.PSet(
+            pfTauEnergyRecoveryPlugin2,
+            name = cms.string("tau_en_recovery"),
+            plugin = cms.string("RecoTauEnergyRecoveryPlugin2")
+        )
     ),
 )
