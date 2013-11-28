@@ -59,6 +59,7 @@ namespace pat {
 
       // configurables
       edm::InputTag tauSrc_;
+      edm::InputTag tauTransverseImpactParameterSrc_;
       bool embedIsolationTracks_;
       bool embedLeadTrack_;
       bool embedSignalTracks_;

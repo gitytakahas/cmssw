@@ -1,5 +1,7 @@
 #include "RecoTauTag/RecoTau/interface/TauDiscriminationProducerBase.h"
 
+#include <string>
+
 using namespace reco;
 
 // default constructor; must not be called
@@ -13,6 +15,7 @@ TauDiscriminationProducerBase<TauType, TauDiscriminator>::TauDiscriminationProdu
 //--- standard constructor from PSet
 template<class TauType, class TauDiscriminator>
 TauDiscriminationProducerBase<TauType, TauDiscriminator>::TauDiscriminationProducerBase(const edm::ParameterSet& iConfig)
+  : moduleLabel_(iConfig.getParameter<std::string>("@module_label"))
 {
    // tau collection to discriminate
    TauProducer_        = iConfig.getParameter<edm::InputTag>(getProducerString<TauType>());
@@ -112,7 +115,6 @@ void TauDiscriminationProducerBase<TauType, TauDiscriminator>::produce(edm::Even
          double discResult  = (*prediscriminants_[iDisc].handle)[tauRef];
          uint8_t thisPasses = ( discResult > prediscriminants_[iDisc].cut ) ? 1 : 0;
 
-
          // if we are using the AND option, as soon as one fails,
          // the result is FAIL and we can quit looping.
          // if we are using the OR option as soon as one passes,
@@ -146,6 +148,9 @@ void TauDiscriminationProducerBase<TauType, TauDiscriminator>::produce(edm::Even
       output->setValue(iTau, result);
    }
    event.put(output);
+
+   // function to put additional information into the event - does nothing in base, but can be overridden in derived classes
+   endEvent(event);
 }
 
 // template specialiazation to get the correct (Calo/PF)TauProducer names
