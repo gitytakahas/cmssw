@@ -172,7 +172,6 @@ double PFRecoTauDiscriminationAgainstMuonMVA::discriminate(const PFTauRef& tau)
   if ( verbosity_ ) {
     edm::LogPrint("PFTauAgainstMuonMVA") << "<PFRecoTauDiscriminationAgainstMuonMVA::discriminate>:";
     edm::LogPrint("PFTauAgainstMuonMVA") << " moduleLabel = " << moduleLabel_;
-    edm::LogPrint("PFTauAgainstMuonMVA") << " mvaMin = " << mvaMin_;
   }
   
   // CV: define dummy category index in order to use RecoTauDiscriminantCutMultiplexer module to appy WP cuts
