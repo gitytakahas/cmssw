@@ -268,10 +268,10 @@ RecoTauQualityCuts::RecoTauQualityCuts(const edm::ParameterSet &qcuts)
   minTrackVertexWeight_ = getDouble("minTrackVertexWeight");
   
   // Use bit-wise & to avoid conditional code
-  checkHitPattern_ = (minTrackPixelHits_ > 0) & (minTrackHits_ > 0);
-  checkPV_ = (maxTransverseImpactParameter_ >= 0) &
-             (maxDeltaZ_ >= 0) &
-             (maxDeltaZToLeadTrack_ >= 0) &
+  checkHitPattern_ = (minTrackPixelHits_ > 0) || (minTrackHits_ > 0);
+  checkPV_ = (maxTransverseImpactParameter_ >= 0) ||
+             (maxDeltaZ_ >= 0) ||
+             (maxDeltaZToLeadTrack_ >= 0) ||
              (minTrackVertexWeight_ >= 0);
 
   // Build the QCuts for gammas
@@ -345,14 +345,12 @@ bool RecoTauQualityCuts::filterTrack(const reco::TrackRef& track) const
   return filterTrack_(track);
 }
 
-template <typename T>
-bool RecoTauQualityCuts::filterTrack_(const T& trackRef) const
+bool RecoTauQualityCuts::filterTrack(const reco::Track& track) const
 {
-  const Track *track = trackRef.get();
-  if(minTrackPt_ >= 0 && !(track->pt() > minTrackPt_)) return false;
-  if(maxTrackChi2_ >= 0 && !(track->normalizedChi2() <= maxTrackChi2_)) return false;
+  if(minTrackPt_ >= 0 && !(track.pt() > minTrackPt_)) return false;
+  if(maxTrackChi2_ >= 0 && !(track.normalizedChi2() <= maxTrackChi2_)) return false;
   if(checkHitPattern_) {
-    const reco::HitPattern hitPattern = track->hitPattern();
+    const reco::HitPattern hitPattern = track.hitPattern();
     if(minTrackPixelHits_ > 0 && !(hitPattern.numberOfValidPixelHits() >= minTrackPixelHits_)) return false;
     if(minTrackHits_ > 0 && !(hitPattern.numberOfValidHits() >= minTrackHits_)) return false;
   }
@@ -363,9 +361,9 @@ bool RecoTauQualityCuts::filterTrack_(const T& trackRef) const
   }
 
   if(maxTransverseImpactParameter_ >= 0 &&
-     !(std::fabs(track->dxy(pv_->position())) <= maxTransverseImpactParameter_))
+     !(std::fabs(track.dxy(pv_->position())) <= maxTransverseImpactParameter_))
       return false;
-  if(maxDeltaZ_ >= 0 && !(std::fabs(track->dz(pv_->position())) <= maxDeltaZ_)) return false;
+  if(maxDeltaZ_ >= 0 && !(std::fabs(track.dz(pv_->position())) <= maxDeltaZ_)) return false;
   if(maxDeltaZToLeadTrack_ >= 0) {
     if ( leadTrack_.isNull()) {
       edm::LogError("QCutsNoValidLeadTrack") << "Lead track Ref in " <<
@@ -373,12 +371,18 @@ bool RecoTauQualityCuts::filterTrack_(const T& trackRef) const
       return false;
     }
 
-    if(!(std::fabs(track->dz(pv_->position()) - leadTrack_->dz(pv_->position())) <= maxDeltaZToLeadTrack_))
+    if(!(std::fabs(track.dz(pv_->position()) - leadTrack_->dz(pv_->position())) <= maxDeltaZToLeadTrack_))
       return false;
   }
-  if(minTrackVertexWeight_ > -1.0 && !(pv_->trackWeight(convertRef(trackRef)) >= minTrackVertexWeight_)) return false;
 
   return true;
+}
+
+template <typename T>
+bool RecoTauQualityCuts::filterTrack_(const T& trackRef) const
+{
+  const Track *track = trackRef.get();
+  return filterTrack(*track);
 }
 
 bool RecoTauQualityCuts::filterGammaCand(const reco::PFCandidate& cand) const {
@@ -386,7 +390,17 @@ bool RecoTauQualityCuts::filterGammaCand(const reco::PFCandidate& cand) const {
   return true;
 }
 
+bool RecoTauQualityCuts::filterGammaCand(const pat::PackedCandidate& cand) const {
+  if(minGammaEt_ >= 0 && !(cand.et() > minGammaEt_)) return false;
+  return true;
+}
+
 bool RecoTauQualityCuts::filterNeutralHadronCand(const reco::PFCandidate& cand) const {
+  if(minNeutralHadronEt_ >= 0 && !(cand.et() > minNeutralHadronEt_)) return false;
+  return true;
+}
+
+bool RecoTauQualityCuts::filterNeutralHadronCand(const pat::PackedCandidate& cand) const {
   if(minNeutralHadronEt_ >= 0 && !(cand.et() > minNeutralHadronEt_)) return false;
   return true;
 }
@@ -410,6 +424,25 @@ bool RecoTauQualityCuts::filterCandByType(const reco::PFCandidate& cand) const {
   return false;
 }
 
+bool RecoTauQualityCuts::filterCandByType(const pat::PackedCandidate& cand) const {
+  switch(std::abs(cand.pdgId())){
+    case 22: // corresponds to PFCandidate::gamma
+      return filterGammaCand(cand);
+    case 130: // corresponds to PFCandidate::h0
+      return filterNeutralHadronCand(cand);
+    // We use the same qcuts for muons/electrons and charged hadrons.
+    case 211: // corresponds to PFCandidate::h
+    case 11: // corresponds to PFCandidate::e
+    case 13: // corresponds to PFCandidate::mu
+      // no cuts ATM (track cuts applied in filterCand)
+      return true;
+    // Return false if we dont' know how to deal with this particle type
+    default:
+      return false;
+  };
+  return false;
+}
+
 bool RecoTauQualityCuts::filterCand(const reco::PFCandidate& cand) const 
 {
   auto trackRef = cand.trackRef();
@@ -423,6 +456,17 @@ bool RecoTauQualityCuts::filterCand(const reco::PFCandidate& cand) const
       result = filterTrack_(gsfTrackRef);
     }
   }
+  if(result)
+    result = filterCandByType(cand);
+  return result;
+}
+
+bool RecoTauQualityCuts::filterCand(const pat::PackedCandidate& cand) const
+{
+  auto track = cand.pseudoTrack();
+  bool result = true;
+  // PackedCandidates have no track references, only a pseudo track of type reco::Track
+  result = filterTrack(cand.pseudoTrack());
   if(result)
     result = filterCandByType(cand);
   return result;
