@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 from RecoTauTag.RecoTau.PFRecoTauPFJetInputs_cfi import PFRecoTauPFJetInputs
-
+from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *
 #-------------------------------------------------------------------------------
 #------------------ Jet Production and Preselection-----------------------------
 #-------------------------------------------------------------------------------
