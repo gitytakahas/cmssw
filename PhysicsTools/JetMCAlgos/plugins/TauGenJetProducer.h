@@ -29,7 +29,9 @@ class TauGenJetProducer : public edm::EDProducer {
 
   ~TauGenJetProducer();
 
-  virtual void produce(edm::Event&, const edm::EventSetup&) override;
+  virtual void produce(edm::Event&, const edm::EventSetup&) override; //mf
+
+  //mf  virtual void beginJob();
 
  private:
 
@@ -43,6 +45,8 @@ class TauGenJetProducer : public edm::EDProducer {
   /// verbose ?
   bool   verbose_;
 
+  /// if yes, input is assummed to be a MiniAOD //mf
+  bool   isMiniAOD; //mf
 };
 
 #endif
