@@ -19,7 +19,12 @@ using namespace reco;
 TauGenJetProducer::TauGenJetProducer(const edm::ParameterSet& iConfig)
 {
 
-  isMiniAOD = iConfig.getParameter<bool>("isMiniAOD"); //mf
+  isMiniAOD = iConfig.exists("isMiniAOD") ? //mf
+    iConfig.getParameter<bool>("isMiniAOD") : false; //mf
+
+  //  isMiniAOD = iConfig.getParameter<bool>("isMiniAOD"); //mf
+
+  std::cout << "ZZZ " << isMiniAOD << std::endl;
 
   if (isMiniAOD){ //mf
     inputTagGenParticles_ = iConfig.getParameter<InputTag>("PrunedGenParticles"); //mf
@@ -41,8 +46,6 @@ TauGenJetProducer::TauGenJetProducer(const edm::ParameterSet& iConfig)
 }
 
 TauGenJetProducer::~TauGenJetProducer() { }
-
-//mf void TauGenJetProducer::beginJob() { }
 
 void TauGenJetProducer::produce(Event& iEvent,
 				const EventSetup& iSetup) {
@@ -119,8 +122,6 @@ void TauGenJetProducer::produce(Event& iEvent,
 
     if (charge != (*iTau)->charge() )
       std::cout<<" charge of Tau: " << (*iTau) << " not equal to charge of sum of charge of all descendents. " << std::cout;
-
-    //    std::cout << "ZZZ pt= " << jet.pt() << std::endl; //mf
 
     jet.setCharge(charge);
     pOutVisTaus->push_back( jet );
