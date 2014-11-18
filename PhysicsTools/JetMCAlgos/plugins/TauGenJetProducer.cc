@@ -22,10 +22,6 @@ TauGenJetProducer::TauGenJetProducer(const edm::ParameterSet& iConfig)
   isMiniAOD = iConfig.exists("isMiniAOD") ? //mf
     iConfig.getParameter<bool>("isMiniAOD") : false; //mf
 
-  //  isMiniAOD = iConfig.getParameter<bool>("isMiniAOD"); //mf
-
-  std::cout << "ZZZ " << isMiniAOD << std::endl;
-
   if (isMiniAOD){ //mf
     inputTagGenParticles_ = iConfig.getParameter<InputTag>("PrunedGenParticles"); //mf
   } else{ //mf
