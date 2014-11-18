@@ -84,8 +84,6 @@ HISTOGRAMS
         efficiency calculations
 """
 
-#print "In RecoTauValidation_cfi.py now"
-
 #Helper process to make future cloning easier
 proc = cms.Process('helper')
 

@@ -57,7 +57,7 @@ options.register( 'dataSource',
                         \n\t\t\trecoFiles:\t\t\tGet data from [sourceFile] (must have RECO)\
                         \n\t\t\trecoFiles+PFTau:\t\tGet reco data as above, and rerun PFTau with current tags \
                         \n\t\t\trecoFiles+PFTau+CaloTau:\t\tRun CaloTau too \
-                        \n\t\t\trecoFiles+MiniAOD:\t\t\tGet data from [sourceFile] (must have RECO)\
+                        \n\t\t\trecoFiles+MiniAOD:\t\t\tGet data from [sourceFile] (must be a MiniAOD)\
                         \n\t\t\trecoFiles+PFTau+MiniAOD:\t\tGet reco data as above, and rerun PFTau with current tags \
                         \n\t\t\trecoFiles+PFTau+MiniAOD+CaloTau:\t\tRun CaloTau too \
                         \n\t\t\tdigiFiles:\t\t\tGet data from [sourceFile] (must have DIGI) and rerun RECO \
