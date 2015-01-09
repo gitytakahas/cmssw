@@ -57,12 +57,17 @@ options.register( 'dataSource',
                         \n\t\t\trecoFiles:\t\t\tGet data from [sourceFile] (must have RECO)\
                         \n\t\t\trecoFiles+PFTau:\t\tGet reco data as above, and rerun PFTau with current tags \
                         \n\t\t\trecoFiles+PFTau+CaloTau:\t\tRun CaloTau too \
+                        \n\t\t\trecoFiles+MiniAOD:\t\t\tGet data from [sourceFile] (must be a MiniAOD)\
+                        \n\t\t\trecoFiles+PFTau+MiniAOD:\t\tGet reco data as above, and rerun PFTau with current tags \
+                        \n\t\t\trecoFiles+PFTau+MiniAOD+CaloTau:\t\tRun CaloTau too \
                         \n\t\t\tdigiFiles:\t\t\tGet data from [sourceFile] (must have DIGI) and rerun RECO \
                         \n\t\t\tfastsim:\t\t\tRun FastSim \
                         \n\t\t\tfullsim:\t\t\tGen-Sim-Digi-Reco-Validate!\n"
                   )
 
-allowedOptions['dataSource'] = ['recoFiles', 'recoFiles+PFTau', 'recoFiles+PFTau+CaloTau', 'recoFiles+CaloTau', 'recoFiles+CaloTau+PFTau', 'fastsim', 'digiFiles', 'fullsim']
+allowedOptions['dataSource'] = ['recoFiles', 'recoFiles+PFTau', 'recoFiles+PFTau+CaloTau', 'recoFiles+CaloTau', 'recoFiles+CaloTau+PFTau',
+                                'recoFiles+MiniAOD', 'recoFiles+PFTau+MiniAOD', 'recoFiles+PFTau+CaloTau+MiniAOD', 'recoFiles+CaloTau+MiniAOD', 'recoFiles+CaloTau+PFTau+MiniAOD',
+                                'fastsim', 'digiFiles', 'fullsim']
 
 options.register( 'sourceFile',
                   'none',

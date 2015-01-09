@@ -18,8 +18,16 @@ using namespace reco;
 
 TauGenJetProducer::TauGenJetProducer(const edm::ParameterSet& iConfig)
 {
-  inputTagGenParticles_
-    = iConfig.getParameter<InputTag>("GenParticles");
+
+  isMiniAOD = iConfig.exists("isMiniAOD") ? //mf
+    iConfig.getParameter<bool>("isMiniAOD") : false; //mf
+
+  if (isMiniAOD){ //mf
+    inputTagGenParticles_ = iConfig.getParameter<InputTag>("PrunedGenParticles"); //mf
+  } else{ //mf
+    inputTagGenParticles_ = iConfig.getParameter<InputTag>("GenParticles");
+  } //mf
+
   tokenGenParticles_
     = consumes<GenParticleCollection>(inputTagGenParticles_);
 
@@ -30,6 +38,7 @@ TauGenJetProducer::TauGenJetProducer(const edm::ParameterSet& iConfig)
     iConfig.getUntrackedParameter<bool>("verbose",false);
 
   produces<GenJetCollection>();
+
 }
 
 TauGenJetProducer::~TauGenJetProducer() { }

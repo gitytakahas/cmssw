@@ -43,6 +43,8 @@ class TauGenJetProducer : public edm::EDProducer {
   /// verbose ?
   bool   verbose_;
 
+  /// if yes, input is assummed to be a MiniAOD
+  bool   isMiniAOD;
 };
 
 #endif

@@ -4,14 +4,14 @@ import shutil
 import sys
 
 from Validation.RecoTau.ValidationOptions_cff import *
-import Validation.RecoTau.RecoTauValidation_cfi as validation
-
-process = cms.Process("TEST")
 
 # command options defined in Validation/RecoTau/python/ValidationOptions_cfi
 options.parseArguments()
-
 checkOptionsForBadInput()
+
+import Validation.RecoTau.RecoTauValidation_cfi as validation
+
+process = cms.Process("TEST")
 
 if not calledBycmsRun() and not options.gridJob:
    print "Run 'cmsRun RunTauValidation_cfg.py help' for options."
