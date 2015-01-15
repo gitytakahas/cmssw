@@ -245,6 +245,20 @@ RecoTauVertexAssociator::associatedVertex(const PFTau& tau) const
 }
 
 reco::VertexRef
+RecoTauVertexAssociator::associatedVertex(const pat::Tau& tau) const
+{
+	reco::PFJetRef jetRef;
+	if(tau.isPFTau()){
+		jetRef = tau.pfJetRef();
+	}else{
+		LogTrace("VtxTrkAssocInfo") << "The vertex collection PFTauPrimaryVertices is currently not saved in miniAOD" ;
+		//return tau.primaryVertex();
+		return reco::VertexRef();
+	}
+	return associatedVertex(*jetRef);
+}
+
+reco::VertexRef
 RecoTauVertexAssociator::associatedVertex(const PFJet& jet) const 
 {
   if ( verbosity_ >= 1 ) {
