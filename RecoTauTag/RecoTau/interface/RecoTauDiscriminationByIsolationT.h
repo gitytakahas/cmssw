@@ -439,9 +439,7 @@ RecoTauDiscriminationByIsolationT<Ttau, TcandColl, TcandPtr, Tcand, Tdiscr>::dis
   }
   if ( includeGammas_ || calculateWeights_ ) {
 	for( auto const & cand : candidates.isoGamma(pfTau) ) {
-		std::cout << "010101" << std::endl;
       if ( qcuts_->filterCandRef(cand) ) {
-    	  std::cout << "020202" << std::endl;
     	LogTrace("discriminate") << "adding neutral iso cand with pt " << cand->pt() ;
         isoNeutral_.push_back(cand);
       }
@@ -609,7 +607,6 @@ RecoTauDiscriminationByIsolationT<Ttau, TcandColl, TcandPtr, Tcand, Tdiscr>::dis
 
 //--- Relative Sum PT requirement
     failsRelativeSumPtCut = (totalPt > ((pfTau->pt() - offsetRelativeSumPt_)*maximumRelativeSumPt_));
-    std::cout << "charged = " << chargedPt << ", neutral = " << neutralPt << ", pu = " << puPt << std::endl;
   }
 
   bool fails = (applyOccupancyCut_ && failsOccupancyCut) ||
