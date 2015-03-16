@@ -1,10 +1,3 @@
-/*
- * PATSlimmedTauDiscriminationByIsolation.cc
- *
- *  Created on: Dec 8, 2014
- *      Author: nehrkorn
- */
-
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/PatCandidates/interface/PFParticle.h"

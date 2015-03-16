@@ -1,10 +1,3 @@
-/*
- * RecoTauDiscriminationByIsolationT.h
- *
- *  Created on: Oct 1, 2014
- *      Author: nehrkorn
- */
-
 #ifndef RECOTAUDISCRIMINATIONBYISOLATIONT_H_
 #define RECOTAUDISCRIMINATIONBYISOLATIONT_H_
 
