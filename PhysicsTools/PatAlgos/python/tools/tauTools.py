@@ -56,21 +56,23 @@ def _switchToPFTau(process,
                    pfTauType,
                    idSources,
                    patTauLabel = "",
-                   postfix = ""):
+                   postfix = "",
+                   isoTauSource="combinatoricRecoTaus"):
+
     """internal auxiliary function to switch to **any** PFTau collection"""
     print ' switching PAT Tau input to: ', tauSource
 
     applyPostfix(process, "tauMatch" + patTauLabel, postfix).src = tauSource
     applyPostfix(process, "tauGenJetMatch" + patTauLabel, postfix).src = tauSource
     
-    applyPostfix(process, "tauIsoDepositPFCandidates" + patTauLabel, postfix).src = tauSource
-    applyPostfix(process, "tauIsoDepositPFCandidates" + patTauLabel, postfix).ExtractorPSet.tauSource = tauSource
-    applyPostfix(process, "tauIsoDepositPFChargedHadrons" + patTauLabel, postfix).src = tauSource
-    applyPostfix(process, "tauIsoDepositPFChargedHadrons" + patTauLabel, postfix).ExtractorPSet.tauSource = tauSource
-    applyPostfix(process, "tauIsoDepositPFNeutralHadrons" + patTauLabel, postfix).src = tauSource
-    applyPostfix(process, "tauIsoDepositPFNeutralHadrons" + patTauLabel, postfix).ExtractorPSet.tauSource = tauSource
-    applyPostfix(process, "tauIsoDepositPFGammas" + patTauLabel, postfix).src = tauSource
-    applyPostfix(process, "tauIsoDepositPFGammas" + patTauLabel, postfix).ExtractorPSet.tauSource = tauSource
+    applyPostfix(process, "tauIsoDepositPFCandidates" + patTauLabel, postfix).src = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFCandidates" + patTauLabel, postfix).ExtractorPSet.tauSource = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFChargedHadrons" + patTauLabel, postfix).src = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFChargedHadrons" + patTauLabel, postfix).ExtractorPSet.tauSource = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFNeutralHadrons" + patTauLabel, postfix).src = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFNeutralHadrons" + patTauLabel, postfix).ExtractorPSet.tauSource = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFGammas" + patTauLabel, postfix).src = isoTauSource
+    applyPostfix(process, "tauIsoDepositPFGammas" + patTauLabel, postfix).ExtractorPSet.tauSource = isoTauSource
     
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauSource = tauSource
     # CV: reconstruction of tau lifetime information not enabled for tau collections other than 'hpsPFTauProducer' yet
