@@ -96,11 +96,11 @@ PFPileUpAlgo::chargedHadronVertex( const reco::VertexCollection& vertices,
     // first find the closest jet within maxJetDeltaR_
     int jetIdx = -1;
     double minDeltaR = 999.;
-    for(edm::View<reco::Candidate>::const_iterator ij=jets.begin(); ij!=jets.end(); ++ij)
+    for(auto ij=jets.begin(); ij!=jets.end(); ++ij)
     {
       if( ij->pt() < minJetPt_ ) continue; // skip jets below the jet Pt threshold
 
-      double deltaR = reco::deltaR( *ij, *trackBaseRef );
+      double deltaR = reco::deltaR( *ij, *track );
       if( deltaR < maxJetDeltaR_ && deltaR < minDeltaR )
       {
         minDeltaR = deltaR;
@@ -111,12 +111,12 @@ PFPileUpAlgo::chargedHadronVertex( const reco::VertexCollection& vertices,
     // if jet found
     if( jetIdx!=-1 )
     {
-      reco::TransientTrack transientTrack = builder.build(*trackBaseRef);
+      reco::TransientTrack transientTrack = builder.build(*track);
       GlobalVector direction(jets.at(jetIdx).px(), jets.at(jetIdx).py(), jets.at(jetIdx).pz());
       // find the vertex with the smallest distanceToJetAxis that is still within maxDistaneToJetAxis_
       int vtxIdx = -1;
       double minDistanceToJetAxis = 999.;
-      for(IV iv=vertices.begin(); iv!=vertices.end(); ++iv)
+      for(auto iv=vertices.begin(); iv!=vertices.end(); ++iv)
       {
         double distanceToJetAxis = IPTools::jetTrackDistance(transientTrack, direction, *iv).second.value();
         if( distanceToJetAxis < maxDistanceToJetAxis_ && distanceToJetAxis < minDistanceToJetAxis )
@@ -132,6 +132,58 @@ PFPileUpAlgo::chargedHadronVertex( const reco::VertexCollection& vertices,
         if( nFoundVertex==0 ) nFoundVertex++;
       }
     }
+  }
+
+  if (nFoundVertex>0){
+    if (nFoundVertex!=1)
+      edm::LogWarning("TrackOnTwoVertex")<<"a track is shared by at least two verteces. Used to be an assert";
+    return iVertex;
+  }
+  // no vertex found with this track. 
+
+  // optional: as a secondary solution, associate the closest vertex in z
+  if ( checkClosestZVertex_ ) {
+
+    double dzmin = 10000;
+    double ztrack = pfcand.vertex().z();
+    bool foundVertex = false;
+    index = 0;
+    for(auto iv=vertices.begin(); iv!=vertices.end(); ++iv, ++index) {
+
+      double dz = fabs(ztrack - iv->z());
+      if(dz<dzmin) {
+	dzmin = dz; 
+	iVertex = index;
+	foundVertex = true;
+      }
+    }
+
+    if( foundVertex ) 
+      return iVertex;  
+
+  }
+
+
+  return -1 ;
+}
+
+int 
+PFPileUpAlgo::chargedHadronVertex( const reco::VertexCollection& vertices, const reco::PFCandidate& pfcand ) const {
+
+  auto const & track = pfcand.trackRef();  
+  size_t  iVertex = 0;
+  unsigned int index=0;
+  unsigned int nFoundVertex = 0;
+  float bestweight=0;
+  for( auto const & vtx : vertices) {
+    float w = vtx.trackWeight(track);
+    //select the vertex for which the track has the highest weight
+    if (w > bestweight){
+      bestweight=w;
+      iVertex=index;
+      nFoundVertex++;
+    }
+    ++index;
   }
 
   if (nFoundVertex>0){

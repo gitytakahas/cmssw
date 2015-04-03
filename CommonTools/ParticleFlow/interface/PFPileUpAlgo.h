@@ -71,6 +71,10 @@ class PFPileUpAlgo {
                      const edm::View<reco::Candidate> & jets,
                      const TransientTrackBuilder & builder) const;
 
+  int chargedHadronVertex(const reco::VertexCollection& vertices, 
+			  const reco::PFCandidate& pfcand) const;
+
+
   int chargedHadronMuon(const int ivertex, 
                      const reco::PFCandidate& pfcand,
                      const reco::PFCandidateCollection & pfmuons,
