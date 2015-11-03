@@ -608,8 +608,8 @@ double AntiElectronIDMVA6::MVAValue(const reco::PFTau& thePFTau,
     }
   }
   
-  Float_t TauSignalPFGammaCandsIn = GammasPtInSigCone.size();
-  Float_t TauSignalPFGammaCandsOut = GammasPtOutSigCone.size();
+  Int_t TauSignalPFGammaCandsIn = GammasPtInSigCone.size();
+  Int_t TauSignalPFGammaCandsOut = GammasPtOutSigCone.size();
   Float_t TauVisMassIn = (pfGammaSum + pfChargedSum).mass();
 
   Float_t TauPhi = thePFTau.phi();
@@ -809,8 +809,8 @@ double AntiElectronIDMVA6::MVAValue(const reco::PFTau& thePFTau)
     }
   }
   
-  Float_t TauSignalPFGammaCandsIn = GammasPtInSigCone.size();
-  Float_t TauSignalPFGammaCandsOut = GammasPtOutSigCone.size();
+  Int_t TauSignalPFGammaCandsIn = GammasPtInSigCone.size();
+  Int_t TauSignalPFGammaCandsOut = GammasPtOutSigCone.size();
   Float_t TauVisMassIn = (pfGammaSum + pfChargedSum).mass();
 
   Float_t TauPhi = thePFTau.phi();
