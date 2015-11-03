@@ -88,7 +88,44 @@ for training, gbrForestName in tauIdDiscrMVA_trainings.items():
     )
 
 # register anti-electron discriminator MVA
-antiElectronDiscrMVA_categories = {
+antiElectronDiscrMVA5_categories = {
+     '0' : "gbr_NoEleMatch_woGwoGSF_BL",
+     '1' : "gbr_NoEleMatch_woGwGSF_BL",
+     '2' : "gbr_NoEleMatch_wGwoGSF_BL",
+     '3' : "gbr_NoEleMatch_wGwGSF_BL",
+     '4' : "gbr_woGwoGSF_BL",
+     '5' : "gbr_woGwGSF_BL",
+     '6' : "gbr_wGwoGSF_BL",
+     '7' : "gbr_wGwGSF_BL",
+     '8' : "gbr_NoEleMatch_woGwoGSF_EC",
+     '9' : "gbr_NoEleMatch_woGwGSF_EC",
+    '10' : "gbr_NoEleMatch_wGwoGSF_EC",
+    '11' : "gbr_NoEleMatch_wGwGSF_EC",
+    '12' : "gbr_woGwoGSF_EC",
+    '13' : "gbr_woGwGSF_EC",
+    '14' : "gbr_wGwoGSF_EC",
+    '15' : "gbr_wGwGSF_EC"
+}
+antiElectronDiscrMVA5_WPs = [ "eff99", "eff96", "eff91", "eff85", "eff79" ]
+antiElectronDiscrMVA5_version = "v1"
+for category, gbrForestName in antiElectronDiscrMVA5_categories.items():
+    loadRecoTauTagMVAsFromPrepDB.toGet.append(
+        cms.PSet(
+            record = cms.string('GBRWrapperRcd'),
+            tag = cms.string("RecoTauTag_antiElectronMVA5%s_%s" % (antiElectronDiscrMVA5_version, gbrForestName)),
+            label = cms.untracked.string("RecoTauTag_antiElectronMVA5%s_%s" % (antiElectronDiscrMVA5_version, gbrForestName))
+        )
+    )
+    for WP in antiElectronDiscrMVA5_WPs:
+        loadRecoTauTagMVAsFromPrepDB.toGet.append(
+            cms.PSet(
+                record = cms.string('PhysicsTGraphPayloadRcd'),
+                tag = cms.string("RecoTauTag_antiElectronMVA5%s_%s_WP%s" % (antiElectronDiscrMVA5_version, gbrForestName, WP)),
+                label = cms.untracked.string("RecoTauTag_antiElectronMVA5%s_%s_WP%s" % (antiElectronDiscrMVA5_version, gbrForestName, WP))
+            )
+        )
+
+antiElectronDiscrMVA6_categories = {
      '0' : "gbr_NoEleMatch_woGwoGSF_BL",
      '2' : "gbr_NoEleMatch_wGwoGSF_BL",
      '5' : "gbr_woGwGSF_BL",
@@ -98,22 +135,22 @@ antiElectronDiscrMVA_categories = {
     '13' : "gbr_woGwGSF_EC",
     '15' : "gbr_wGwGSF_EC"
 }
-antiElectronDiscrMVA_WPs = [ "Eff99", "Eff96", "Eff91", "Eff85", "Eff79" ]
-antiElectronDiscrMVA_version = "v1"
-for category, gbrForestName in antiElectronDiscrMVA_categories.items():
+antiElectronDiscrMVA6_WPs = [ "Eff99", "Eff96", "Eff91", "Eff85", "Eff79" ]
+antiElectronDiscrMVA6_version = "v1"
+for category, gbrForestName in antiElectronDiscrMVA6_categories.items():
     loadRecoTauTagMVAsFromPrepDB.toGet.append(
         cms.PSet(
             record = cms.string('GBRWrapperRcd'),
-            tag = cms.string("RecoTauTag_antiElectronMVA6%s_%s" % (antiElectronDiscrMVA_version, gbrForestName)),
-            label = cms.untracked.string("RecoTauTag_antiElectronMVA6%s_%s" % (antiElectronDiscrMVA_version, gbrForestName))
+            tag = cms.string("RecoTauTag_antiElectronMVA6%s_%s" % (antiElectronDiscrMVA6_version, gbrForestName)),
+            label = cms.untracked.string("RecoTauTag_antiElectronMVA6%s_%s" % (antiElectronDiscrMVA6_version, gbrForestName))
         )
     )
-    for WP in antiElectronDiscrMVA_WPs:
+    for WP in antiElectronDiscrMVA6_WPs:
         loadRecoTauTagMVAsFromPrepDB.toGet.append(
             cms.PSet(
                 record = cms.string('PhysicsTGraphPayloadRcd'),
-                tag = cms.string("RecoTauTag_antiElectronMVA6%s_%s_WP%s" % (antiElectronDiscrMVA_version, gbrForestName, WP)),
-                label = cms.untracked.string("RecoTauTag_antiElectronMVA6%s_%s_WP%s" % (antiElectronDiscrMVA_version, gbrForestName, WP))
+                tag = cms.string("RecoTauTag_antiElectronMVA6%s_%s_WP%s" % (antiElectronDiscrMVA6_version, gbrForestName, WP)),
+                label = cms.untracked.string("RecoTauTag_antiElectronMVA6%s_%s_WP%s" % (antiElectronDiscrMVA6_version, gbrForestName, WP))
             )
         )
     
