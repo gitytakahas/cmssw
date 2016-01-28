@@ -4,6 +4,7 @@ import SimTracker.TrackAssociatorProducers.trackAssociatorByChi2_cfi
 from SimTracker.TrackAssociatorProducers.quickTrackAssociatorByHits_cfi import *
 from SimTracker.TrackAssociation.trackingParticleRecoTrackAsssociation_cfi import *
 import Validation.RecoTrack.MultiTrackValidator_cfi
+from Validation.RecoTrack.trajectorySeedTracks_cfi import trajectorySeedTracks as _trajectorySeedTracks
 from SimTracker.TrackAssociation.LhcParametersDefinerForTP_cfi import *
 from SimTracker.TrackAssociation.CosmicParametersDefinerForTP_cfi import *
 from Validation.RecoTrack.PostProcessorTracker_cfi import *
@@ -12,34 +13,139 @@ import cutsRecoTracks_cfi
 from SimTracker.TrackerHitAssociation.clusterTpAssociationProducer_cfi import *
 from SimTracker.VertexAssociation.VertexAssociatorByPositionAndTracks_cfi import *
 from PhysicsTools.RecoAlgos.trackingParticleSelector_cfi import trackingParticleSelector as _trackingParticleSelector
+from CommonTools.RecoAlgos.trackingParticleConversionSelector_cfi import trackingParticleConversionSelector as _trackingParticleConversionSelector
 from CommonTools.RecoAlgos.sortedPrimaryVertices_cfi import sortedPrimaryVertices as _sortedPrimaryVertices
 from CommonTools.RecoAlgos.recoChargedRefCandidateToTrackRefProducer_cfi import recoChargedRefCandidateToTrackRefProducer as _recoChargedRefCandidateToTrackRefProducer
 
+### First define the stuff for the standard validation sequence
 ## Track selectors
+_algos = [
+    "generalTracks",
+    "initialStep",
+    "lowPtTripletStep",
+    "pixelPairStep",
+    "detachedTripletStep",
+    "mixedTripletStep",
+    "pixelLessStep",
+    "tobTecStep",
+    "jetCoreRegionalStep",
+    "muonSeededStepInOut",
+    "muonSeededStepOutIn",
+    "duplicateMerge",
+]
+_seedProducers = [
+    "initialStepSeedsPreSplitting",
+    "initialStepSeeds",
+    "detachedTripletStepSeeds",
+    "lowPtTripletStepSeeds",
+    "pixelPairStepSeeds",
+    "mixedTripletStepSeedsA",
+    "mixedTripletStepSeedsB",
+    "pixelLessStepSeeds",
+    "tobTecStepSeedsPair",
+    "tobTecStepSeedsTripl",
+    "jetCoreRegionalStepSeeds",
+    "muonSeededSeedsInOut",
+    "muonSeededSeedsOutIn",
+]
+_trackProducers = [
+    "initialStepTracksPreSplitting",
+    "initialStepTracks",
+    "lowPtTripletStepTracks",
+    "pixelPairStepTracks",
+    "detachedTripletStepTracks",
+    "mixedTripletStepTracks",
+    "pixelLessStepTracks",
+    "tobTecStepTracks",
+    "jetCoreRegionalStepTracks",
+    "muonSeededTracksInOut",
+    "muonSeededTracksOutIn",
+]
+if eras.fastSim.isChosen():
+    _seedProducers.remove("initialStepSeedsPreSplitting")
+    _seedProducers.remove("jetCoreRegionalStepSeeds")
+    _seedProducers.remove("muonSeededSeedsInOut")
+    _seedProducers.remove("muonSeededSeedsOutIn")
+    _trackProducers.remove("initialStepTracksPreSplitting")
+    _trackProducers.remove("jetCoreRegionalStepTracks")
+    _trackProducers.remove("muonSeededTracksInOut")
+    _trackProducers.remove("muonSeededTracksOutIn")
+
+def _algoToSelector(algo):
+    sel = ""
+    if algo != "generalTracks":
+        sel = algo[0].upper()+algo[1:]
+    return "cutsRecoTracks"+sel
+
+def _addSelectorsByAlgo():
+    names = []
+    seq = cms.Sequence()
+    for algo in _algos:
+        if algo == "generalTracks":
+            continue
+        modName = _algoToSelector(algo)
+        mod = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=[algo])
+        globals()[modName] = mod
+        names.append(modName)
+        seq += mod
+    return (names, seq)
+def _addSelectorsByHp():
+    seq = cms.Sequence()
+    names = []
+    for algo in _algos:
+        modName = _algoToSelector(algo)
+        modNameHp = modName+"Hp"
+        if algo == "generalTracks":
+            mod = cutsRecoTracks_cfi.cutsRecoTracks.clone(quality=["highPurity"])
+        else:
+            mod = globals()[modName].clone(quality=["highPurity"])
+        globals()[modNameHp] = mod
+        names.append(modNameHp)
+        seq += mod
+    return (names, seq)
+def _addSelectorsBySrc(modules, midfix, src):
+    seq = cms.Sequence()
+    names = []
+    for modName in modules:
+        modNameNew = modName.replace("cutsRecoTracks", "cutsRecoTracks"+midfix)
+        mod = globals()[modName].clone(src=src)
+        globals()[modNameNew] = mod
+        names.append(modNameNew)
+        seq += mod
+    return (names, seq)
+def _addSelectorsByOriginalAlgoMask(modules, midfix, algoParam):
+    seq = cms.Sequence()
+    names = []
+    for modName in modules:
+        if modName[-2:] == "Hp":
+            modNameNew = modName[:-2] + midfix + "Hp"
+        else:
+            modNameNew = modName + midfix
+        mod = globals()[modName].clone()
+        setattr(mod, algoParam, mod.algorithm.value())
+        mod.algorithm = []
+        globals()[modNameNew] = mod
+        names.append(modNameNew)
+        seq += mod
+    return (names, seq)
+def _addSeedToTrackProducers():
+    names = []
+    seq = cms.Sequence()
+    for seed in _seedProducers:
+        modName = "seedTracks"+seed
+        mod = _trajectorySeedTracks.clone(src=seed)
+        globals()[modName] = mod
+        names.append(modName)
+        seq += mod
+    return (names, seq)
+
 # Validation iterative steps
-cutsRecoTracksInitialStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["initialStep"])
-cutsRecoTracksLowPtTripletStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["lowPtTripletStep"])
-cutsRecoTracksPixelPairStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["pixelPairStep"])
-cutsRecoTracksDetachedTripletStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["detachedTripletStep"])
-cutsRecoTracksMixedTripletStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["mixedTripletStep"])
-cutsRecoTracksPixelLessStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["pixelLessStep"])
-cutsRecoTracksTobTecStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["tobTecStep"])
-cutsRecoTracksJetCoreRegionalStep = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["jetCoreRegionalStep"])
-cutsRecoTracksMuonSeededStepInOut = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["muonSeededStepInOut"])
-cutsRecoTracksMuonSeededStepOutIn = cutsRecoTracks_cfi.cutsRecoTracks.clone(algorithm=["muonSeededStepOutIn"])
+(_selectorsByAlgo, tracksValidationSelectorsByAlgo) = _addSelectorsByAlgo()
 
 # high purity
-cutsRecoTracksHp = cutsRecoTracks_cfi.cutsRecoTracks.clone(quality=["highPurity"])
-cutsRecoTracksInitialStepHp = cutsRecoTracksInitialStep.clone(quality=["highPurity"])
-cutsRecoTracksLowPtTripletStepHp = cutsRecoTracksLowPtTripletStep.clone(quality=["highPurity"])
-cutsRecoTracksPixelPairStepHp = cutsRecoTracksPixelPairStep.clone(quality=["highPurity"])
-cutsRecoTracksDetachedTripletStepHp = cutsRecoTracksDetachedTripletStep.clone(quality=["highPurity"])
-cutsRecoTracksMixedTripletStepHp = cutsRecoTracksMixedTripletStep.clone(quality=["highPurity"])
-cutsRecoTracksPixelLessStepHp = cutsRecoTracksPixelLessStep.clone(quality=["highPurity"])
-cutsRecoTracksTobTecStepHp = cutsRecoTracksTobTecStep.clone(quality=["highPurity"])
-cutsRecoTracksJetCoreRegionalStepHp = cutsRecoTracksJetCoreRegionalStep.clone(quality=["highPurity"])
-cutsRecoTracksMuonSeededStepInOutHp = cutsRecoTracksMuonSeededStepInOut.clone(quality=["highPurity"])
-cutsRecoTracksMuonSeededStepOutInHp = cutsRecoTracksMuonSeededStepOutIn.clone(quality=["highPurity"])
+(_selectorsByAlgoHp, tracksValidationSelectorsByAlgoHp) = _addSelectorsByHp()
+_generalTracksHp = _selectorsByAlgoHp[0]
+_selectorsByAlgoHp = _selectorsByAlgoHp[1:]
 
 # BTV-like selection
 import PhysicsTools.RecoAlgos.btvTracks_cfi as btvTracks_cfi
@@ -47,13 +153,13 @@ cutsRecoTracksBtvLike = btvTracks_cfi.btvTrackRefs.clone()
 
 # Select tracks associated to AK4 jets
 import RecoJets.JetAssociationProducers.ak4JTA_cff as ak4JTA_cff
-ak4JetTracksAssociatorAtVertexPFAll = ak4JTA_cff.ak4JetTracksAssociatorAtVertexPF.clone(
+ak4JetTracksAssociatorExplicitAll = ak4JTA_cff.ak4JetTracksAssociatorExplicit.clone(
     jets = "ak4PFJets"
 )
 from JetMETCorrections.Configuration.JetCorrectors_cff import *
 import CommonTools.RecoAlgos.jetTracksAssociationToTrackRefs_cfi as jetTracksAssociationToTrackRefs_cfi
 cutsRecoTracksAK4PFJets = jetTracksAssociationToTrackRefs_cfi.jetTracksAssociationToTrackRefs.clone(
-    association = "ak4JetTracksAssociatorAtVertexPFAll",
+    association = "ak4JetTracksAssociatorExplicitAll",
     jets = "ak4PFJets",
     correctedPtMin = 10,
 )
@@ -81,78 +187,42 @@ trackingParticleRecoTrackAsssociationSignal = trackingParticleRecoTrackAsssociat
 )
 
 # select tracks from the PV
-# first convert to RecoChargedRefCandidates
-trackRefsForValidation = cms.EDProducer("ChargedRefCandidateProducer",
-    particleType = cms.string('pi+'),
-    src = cms.InputTag("generalTracks")
-)
-# then use the "PV sorting" module to select the candidates associated to PV
-trackRefsFromPV = _sortedPrimaryVertices.clone(
-    particles = "trackRefsForValidation",
-    produceAssociationToOriginalVertices = True,
-    produceNoPileUpCollection = True,
-    produceSortedVertices = False,
-    jets = "ak4CaloJets",
-    vertices = "offlinePrimaryVertices"
-)
-# and finally extract tracks from there
-generalTracksFromPV = _recoChargedRefCandidateToTrackRefProducer.clone(
-    src = cms.InputTag("trackRefsFromPV", "originalNoPileUp")
+from CommonTools.RecoAlgos.TrackWithVertexRefSelector_cfi import trackWithVertexRefSelector as _trackWithVertexRefSelector
+generalTracksFromPV = _trackWithVertexRefSelector.clone(
+    src = "generalTracks",
+    ptMin = 0,
+    ptMax = 1e10,
+    ptErrorCut = 1e10,
+    quality = "loose",
+    vertexTag = "offlinePrimaryVertices",
+    nVertices = 1,
+    vtxFallback = False,
+    zetaVtx = 0.1, # 1 mm
+    rhoVtx = 1e10, # intentionally no dxy cut
 )
 # and then the selectors
-cutsRecoTracksFromPVInitialStep         = cutsRecoTracksInitialStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVLowPtTripletStep    = cutsRecoTracksLowPtTripletStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVPixelPairStep       = cutsRecoTracksPixelPairStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVDetachedTripletStep = cutsRecoTracksDetachedTripletStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMixedTripletStep    = cutsRecoTracksMixedTripletStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVPixelLessStep       = cutsRecoTracksPixelLessStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVTobTecStep          = cutsRecoTracksTobTecStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVJetCoreRegionalStep = cutsRecoTracksJetCoreRegionalStep.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMuonSeededStepInOut = cutsRecoTracksMuonSeededStepInOut.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMuonSeededStepOutIn = cutsRecoTracksMuonSeededStepOutIn.clone(src="generalTracksFromPV")
-# high purity
-cutsRecoTracksFromPVHp                    = cutsRecoTracksHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVInitialStepHp         = cutsRecoTracksInitialStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVLowPtTripletStepHp    = cutsRecoTracksLowPtTripletStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVPixelPairStepHp       = cutsRecoTracksPixelPairStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVDetachedTripletStepHp = cutsRecoTracksDetachedTripletStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMixedTripletStepHp    = cutsRecoTracksMixedTripletStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVPixelLessStepHp       = cutsRecoTracksPixelLessStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVTobTecStepHp          = cutsRecoTracksTobTecStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVJetCoreRegionalStepHp = cutsRecoTracksJetCoreRegionalStepHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMuonSeededStepInOutHp = cutsRecoTracksMuonSeededStepInOutHp.clone(src="generalTracksFromPV")
-cutsRecoTracksFromPVMuonSeededStepOutInHp = cutsRecoTracksMuonSeededStepOutInHp.clone(src="generalTracksFromPV")
+(_selectorsFromPV, tracksValidationSelectorsFromPV) = _addSelectorsBySrc([_generalTracksHp], "FromPV", "generalTracksFromPV")
+tracksValidationSelectorsFromPV.insert(0, generalTracksFromPV)
+
+
+## Select conversion TrackingParticles, and define the corresponding associator
+# (do not use associations because the collections of interest are not subsets of each other)
+trackingParticlesConversion = _trackingParticleConversionSelector.clone()
+tpClusterProducerConversion = tpClusterProducer.clone(
+    trackingParticleSrc = "trackingParticlesConversion",
+)
+quickTrackAssociatorByHitsConversion = quickTrackAssociatorByHits.clone(
+    cluster2TPSrc = "tpClusterProducerConversion"
+)
 
 
 ## MTV instances
-trackValidator= Validation.RecoTrack.MultiTrackValidator_cfi.multiTrackValidator.clone()
-
-trackValidator.label=cms.VInputTag(cms.InputTag("generalTracks"),
-                                   cms.InputTag("cutsRecoTracksHp"),
-                                   cms.InputTag("cutsRecoTracksInitialStep"),
-                                   cms.InputTag("cutsRecoTracksInitialStepHp"),
-                                   cms.InputTag("cutsRecoTracksLowPtTripletStep"),
-                                   cms.InputTag("cutsRecoTracksLowPtTripletStepHp"),
-                                   cms.InputTag("cutsRecoTracksPixelPairStep"),
-                                   cms.InputTag("cutsRecoTracksPixelPairStepHp"),
-                                   cms.InputTag("cutsRecoTracksDetachedTripletStep"),
-                                   cms.InputTag("cutsRecoTracksDetachedTripletStepHp"),
-                                   cms.InputTag("cutsRecoTracksMixedTripletStep"),
-                                   cms.InputTag("cutsRecoTracksMixedTripletStepHp"),
-                                   cms.InputTag("cutsRecoTracksPixelLessStep"),
-                                   cms.InputTag("cutsRecoTracksPixelLessStepHp"),
-                                   cms.InputTag("cutsRecoTracksTobTecStep"),
-                                   cms.InputTag("cutsRecoTracksTobTecStepHp"),
-                                   cms.InputTag("cutsRecoTracksJetCoreRegionalStep"),
-                                   cms.InputTag("cutsRecoTracksJetCoreRegionalStepHp"),
-                                   cms.InputTag("cutsRecoTracksMuonSeededStepInOut"),
-                                   cms.InputTag("cutsRecoTracksMuonSeededStepInOutHp"),
-                                   cms.InputTag("cutsRecoTracksMuonSeededStepOutIn"),
-                                   cms.InputTag("cutsRecoTracksMuonSeededStepOutInHp"),
-                                   cms.InputTag("cutsRecoTracksBtvLike"),
-                                   cms.InputTag("cutsRecoTracksAK4PFJets"),
-                                   )
-trackValidator.useLogPt=cms.untracked.bool(True)
+trackValidator = Validation.RecoTrack.MultiTrackValidator_cfi.multiTrackValidator.clone()
+trackValidator.label = ["generalTracks", _generalTracksHp] + _selectorsByAlgo + _selectorsByAlgoHp +  [
+    "cutsRecoTracksBtvLike",
+    "cutsRecoTracksAK4PFJets",
+]
+trackValidator.useLogPt = cms.untracked.bool(True)
 trackValidator.dodEdxPlots = True
 trackValidator.doPVAssociationPlots = True
 #trackValidator.minpT = cms.double(-1)
@@ -163,14 +233,12 @@ from Configuration.StandardSequences.Eras import eras
 if eras.fastSim.isChosen():
     trackValidator.dodEdxPlots = False
 
+
 # For efficiency of signal TPs vs. signal tracks, and fake rate of
 # signal tracks vs. signal TPs
 trackValidatorFromPV = trackValidator.clone(
     dirName = "Tracking/TrackFromPV/",
-    label = [
-        "generalTracksFromPV",
-        "cutsRecoTracksFromPVHp",
-    ],
+    label = ["generalTracksFromPV"]+_selectorsFromPV,
     label_tp_effic = "trackingParticlesSignal",
     label_tp_fake = "trackingParticlesSignal",
     associators = ["trackingParticleRecoTrackAsssociationSignal"],
@@ -178,29 +246,6 @@ trackValidatorFromPV = trackValidator.clone(
     doPlotsOnlyForTruePV = True,
     doPVAssociationPlots = False,
 )
-trackValidatorFromPVStandalone = trackValidatorFromPV.clone()
-trackValidatorFromPVStandalone.label.extend([
-    "cutsRecoTracksFromPVInitialStep",
-    "cutsRecoTracksFromPVInitialStepHp",
-    "cutsRecoTracksFromPVLowPtTripletStep",
-    "cutsRecoTracksFromPVLowPtTripletStepHp",
-    "cutsRecoTracksFromPVPixelPairStep",
-    "cutsRecoTracksFromPVPixelPairStepHp",
-    "cutsRecoTracksFromPVDetachedTripletStep",
-    "cutsRecoTracksFromPVDetachedTripletStepHp",
-    "cutsRecoTracksFromPVMixedTripletStep",
-    "cutsRecoTracksFromPVMixedTripletStepHp",
-    "cutsRecoTracksFromPVPixelLessStep",
-    "cutsRecoTracksFromPVPixelLessStepHp",
-    "cutsRecoTracksFromPVTobTecStep",
-    "cutsRecoTracksFromPVTobTecStepHp",
-    "cutsRecoTracksFromPVJetCoreRegionalStep",
-    "cutsRecoTracksFromPVJetCoreRegionalStepHp",
-    "cutsRecoTracksFromPVMuonSeededStepInOut",
-    "cutsRecoTracksFromPVMuonSeededStepInOutHp",
-    "cutsRecoTracksFromPVMuonSeededStepOutIn",
-    "cutsRecoTracksFromPVMuonSeededStepOutInHp",
-])
 
 # For fake rate of signal tracks vs. all TPs, and pileup rate of
 # signal tracks vs. non-signal TPs
@@ -212,16 +257,13 @@ trackValidatorFromPVAllTP = trackValidatorFromPV.clone(
     doSimPlots = False,
     doSimTrackPlots = False,
 )
-trackValidatorFromPVAllTPStandalone = trackValidatorFromPVAllTP.clone(
-    label = trackValidatorFromPVStandalone.label.value()
-)
 
 # For efficiency of all TPs vs. all tracks
 trackValidatorAllTPEffic = trackValidator.clone(
     dirName = "Tracking/TrackAllTPEffic/",
     label = [
         "generalTracks",
-        "cutsRecoTracksHp",
+        _generalTracksHp,
     ],
     doSimPlots = False,
     doRecoTrackPlots = False, # Fake rate of all tracks vs. all TPs is already included in trackValidator
@@ -233,65 +275,39 @@ trackValidatorAllTPEffic.histoProducerAlgoBlock.TpSelectorForEfficiencyVsPhi.sig
 trackValidatorAllTPEffic.histoProducerAlgoBlock.TpSelectorForEfficiencyVsPt.signalOnly = False
 trackValidatorAllTPEffic.histoProducerAlgoBlock.TpSelectorForEfficiencyVsVTXR.signalOnly = False
 trackValidatorAllTPEffic.histoProducerAlgoBlock.TpSelectorForEfficiencyVsVTXZ.signalOnly = False
-trackValidatorAllTPEfficStandalone = trackValidatorAllTPEffic.clone(
-    label = trackValidator.label.value()
+
+# For conversions
+trackValidatorConversion = trackValidator.clone(
+    dirName = "Tracking/TrackConversion/",
+    label = [
+        "convStepTracks",
+        "conversionStepTracks",
+        "ckfInOutTracksFromConversions",
+        "ckfOutInTracksFromConversions",
+    ],
+    label_tp_effic = "trackingParticlesConversion",
+    label_tp_fake = "trackingParticlesConversion",
+    associators = ["quickTrackAssociatorByHitsConversion"],
+    UseAssociators = True,
+    doSimPlots = True,
+    dodEdxPlots = False,
+    doPVAssociationPlots = False,
+    calculateDrSingleCollection = False,
 )
+# relax lip and tip
+for n in ["Eta", "Phi", "Pt", "VTXR", "VTXZ"]:
+    pset = getattr(trackValidatorConversion.histoProducerAlgoBlock, "TpSelectorForEfficiencyVs"+n)
+    pset.lip = trackValidatorConversion.lipTP.value()
+    pset.tip = trackValidatorConversion.tipTP.value()
 
 
 # the track selectors
 tracksValidationSelectors = cms.Sequence(
-    cutsRecoTracksHp*
-    cutsRecoTracksInitialStep*
-    cutsRecoTracksInitialStepHp*
-    cutsRecoTracksLowPtTripletStep*
-    cutsRecoTracksLowPtTripletStepHp*
-    cutsRecoTracksPixelPairStep*
-    cutsRecoTracksPixelPairStepHp*
-    cutsRecoTracksDetachedTripletStep*
-    cutsRecoTracksDetachedTripletStepHp*
-    cutsRecoTracksMixedTripletStep*
-    cutsRecoTracksMixedTripletStepHp*
-    cutsRecoTracksPixelLessStep*
-    cutsRecoTracksPixelLessStepHp*
-    cutsRecoTracksTobTecStep*
-    cutsRecoTracksTobTecStepHp*
-    cutsRecoTracksJetCoreRegionalStep*
-    cutsRecoTracksJetCoreRegionalStepHp*
-    cutsRecoTracksMuonSeededStepInOut*
-    cutsRecoTracksMuonSeededStepInOutHp*
-    cutsRecoTracksMuonSeededStepOutIn*
-    cutsRecoTracksMuonSeededStepOutInHp*
-    cutsRecoTracksBtvLike*
-    ak4JetTracksAssociatorAtVertexPFAll*
+    tracksValidationSelectorsByAlgo +
+    tracksValidationSelectorsByAlgoHp +
+    cutsRecoTracksBtvLike +
+    ak4JetTracksAssociatorExplicitAll +
     cutsRecoTracksAK4PFJets
-)
-tracksValidationSelectorsFromPV = cms.Sequence(
-    trackRefsForValidation*
-    trackRefsFromPV*
-    generalTracksFromPV*
-    cutsRecoTracksFromPVHp
-)
-tracksValidationSelectorsFromPVStandalone = cms.Sequence(
-    cutsRecoTracksFromPVInitialStep*
-    cutsRecoTracksFromPVInitialStepHp*
-    cutsRecoTracksFromPVLowPtTripletStep*
-    cutsRecoTracksFromPVLowPtTripletStepHp*
-    cutsRecoTracksFromPVPixelPairStep*
-    cutsRecoTracksFromPVPixelPairStepHp*
-    cutsRecoTracksFromPVDetachedTripletStep*
-    cutsRecoTracksFromPVDetachedTripletStepHp*
-    cutsRecoTracksFromPVMixedTripletStep*
-    cutsRecoTracksFromPVMixedTripletStepHp*
-    cutsRecoTracksFromPVPixelLessStep*
-    cutsRecoTracksFromPVPixelLessStepHp*
-    cutsRecoTracksFromPVTobTecStep*
-    cutsRecoTracksFromPVTobTecStepHp*
-    cutsRecoTracksFromPVJetCoreRegionalStep*
-    cutsRecoTracksFromPVJetCoreRegionalStepHp*
-    cutsRecoTracksFromPVMuonSeededStepInOut*
-    cutsRecoTracksFromPVMuonSeededStepInOutHp*
-    cutsRecoTracksFromPVMuonSeededStepOutIn*
-    cutsRecoTracksFromPVMuonSeededStepOutInHp
 )
 tracksValidationTruth = cms.Sequence(
     tpClusterProducer +
@@ -307,55 +323,124 @@ tracksValidationTruthSignal = cms.Sequence(
     trackingParticleRecoTrackAsssociationSignal
 )
 
-if eras.fastSim.isChosen():
-    tracksValidationTruth.remove(tpClusterProducer)
-    tracksValidationTruthSignal.remove(tpClusterProducerSignal)
-
+tracksValidationTruthConversion = cms.Sequence(
+    trackingParticlesConversion +
+    tpClusterProducerConversion +
+    quickTrackAssociatorByHitsConversion
+)
 
 tracksPreValidation = cms.Sequence(
     tracksValidationSelectors +
     tracksValidationSelectorsFromPV +
     tracksValidationTruth +
-    tracksValidationTruthSignal
-)
-tracksPreValidationStandalone = cms.Sequence(
-    tracksPreValidation +
-    tracksValidationSelectorsFromPVStandalone
+    tracksValidationTruthSignal +
+    tracksValidationTruthConversion
 )
 
-# selectors go into separate "prevalidation" sequence
 tracksValidation = cms.Sequence(
+    tracksPreValidation +
     trackValidator +
     trackValidatorFromPV +
     trackValidatorFromPVAllTP +
-    trackValidatorAllTPEffic
+    trackValidatorAllTPEffic +
+    trackValidatorConversion
 )
 
-tracksValidationStandalone = cms.Sequence(
-    ak4PFL1FastL2L3CorrectorChain+
-    tracksPreValidationStandalone+
-    trackValidator +
+if eras.fastSim.isChosen():
+    tracksValidationTruth.remove(tpClusterProducer)
+    tracksValidationTruthSignal.remove(tpClusterProducerSignal)
+    tracksPreValidation.remove(tracksValidationTruthConversion)
+    tracksValidation.remove(trackValidatorConversion)
+
+### Then define stuff for standalone mode (i.e. MTV with RECO+DIGI input)
+
+# Select by originalAlgo and algoMask
+(_selectorsByOriginalAlgo, tracksValidationSelectorsByOriginalAlgoStandalone) = _addSelectorsByOriginalAlgoMask(_selectorsByAlgo+_selectorsByAlgoHp, "ByOriginalAlgo", "originalAlgorithm")
+(_selectorsByAlgoMask, tracksValidationSelectorsByAlgoMaskStandalone) = _addSelectorsByOriginalAlgoMask(_selectorsByAlgo+_selectorsByAlgoHp, "ByAlgoMask", "algorithmMaskContains")
+
+# Select fromPV by iteration
+(_selectorsFromPVStandalone, tracksValidationSelectorsFromPVStandalone) = _addSelectorsBySrc(_selectorsByAlgo+_selectorsByAlgoHp, "FromPV", "generalTracksFromPV")
+
+# MTV instances
+trackValidatorStandalone = trackValidator.clone()
+trackValidatorStandalone.label.extend(_selectorsByOriginalAlgo + _selectorsByAlgoMask)
+trackValidatorFromPVStandalone = trackValidatorFromPV.clone()
+trackValidatorFromPVStandalone.label.extend(_selectorsFromPVStandalone)
+trackValidatorFromPVAllTPStandalone = trackValidatorFromPVAllTP.clone(
+    label = trackValidatorFromPVStandalone.label.value()
+)
+trackValidatorAllTPEfficStandalone = trackValidatorAllTPEffic.clone(
+    label = trackValidator.label.value()
+)
+for _label in ["cutsRecoTracksBtvLike", "cutsRecoTracksAK4PFJets"]:
+    trackValidatorAllTPEfficStandalone.label.remove(_label)
+trackValidatorConversionStandalone = trackValidatorConversion.clone()
+trackValidatorConversionStandalone.label.remove("convStepTracks")
+
+# sequences
+tracksValidationSelectorsStandalone = cms.Sequence(
+    tracksValidationSelectorsByOriginalAlgoStandalone +
+    tracksValidationSelectorsByAlgoMaskStandalone +
+    tracksValidationSelectorsFromPVStandalone
+)
+trackValidatorsStandalone = cms.Sequence(
+    trackValidatorStandalone +
     trackValidatorFromPVStandalone +
     trackValidatorFromPVAllTPStandalone +
-    trackValidatorAllTPEfficStandalone
+    trackValidatorAllTPEfficStandalone +
+    trackValidatorConversionStandalone
+)
+tracksValidationStandalone = cms.Sequence(
+    ak4PFL1FastL2L3CorrectorChain +
+    tracksPreValidation +
+    tracksValidationSelectorsStandalone +
+    trackValidatorsStandalone
 )
 
-# 'slim' sequences that only depend on track and tracking particle collections
-tracksValidationSelectorsSlim = tracksValidationSelectors.copyAndExclude([cutsRecoTracksBtvLike,ak4JetTracksAssociatorAtVertexPFAll,cutsRecoTracksAK4PFJets])
+### TrackingOnly mode (i.e. MTV with DIGI input + tracking-only reconstruction)
 
-tracksPreValidationSlim = cms.Sequence(
-    tracksValidationSelectorsSlim +
-    tracksValidationTruth
+# selectors
+tracksValidationSelectorsTrackingOnly = tracksValidationSelectors.copyAndExclude([ak4JetTracksAssociatorExplicitAll,cutsRecoTracksAK4PFJets]) # selectors using track information only (i.e. no PF)
+(_seedSelectors, tracksValidationSeedSelectorsTrackingOnly) = _addSeedToTrackProducers()
+
+# MTV instances
+trackValidatorTrackingOnly = trackValidatorStandalone.clone()
+trackValidatorTrackingOnly.label.remove("cutsRecoTracksAK4PFJets")
+
+trackValidatorBuildingTrackingOnly = trackValidatorTrackingOnly.clone(
+    dirName = "Tracking/TrackBuilding/",
+    associators = ["quickTrackAssociatorByHits"],
+    UseAssociators = True,
+    label = _trackProducers,
+    dodEdxPlots = False,
+    doPVAssociationPlots = False,
+    doSimPlots = False,
+)
+trackValidatorSeedingTrackingOnly = trackValidatorBuildingTrackingOnly.clone(
+    dirName = "Tracking/TrackSeeding/",
+    label = _seedSelectors,
+    doSeedPlots = True,
 )
 
-trackValidatorSlim = trackValidator.clone(
-    doPVAssociationPlots = cms.untracked.bool(False),
-    dodEdxPlots = False
-)
-for _label in [cms.InputTag("cutsRecoTracksBtvLike"),cms.InputTag("cutsRecoTracksAK4PFJets")]:
-    trackValidatorSlim.label.remove(_label)
+trackValidatorConversionTrackingOnly = trackValidatorConversion.clone()
+trackValidatorConversionTrackingOnly.label.remove("ckfInOutTracksFromConversions")
+trackValidatorConversionTrackingOnly.label.remove("ckfOutInTracksFromConversions")
 
-tracksValidationSlim = cms.Sequence(
-    tracksPreValidationSlim+
-    trackValidatorSlim
+# sequences
+tracksPreValidationTrackingOnly = tracksPreValidation.copy()
+tracksPreValidationTrackingOnly.replace(tracksValidationSelectors, tracksValidationSelectorsTrackingOnly)
+
+trackValidatorsTrackingOnly = trackValidatorsStandalone.copy()
+trackValidatorsTrackingOnly.replace(trackValidatorStandalone, trackValidatorTrackingOnly)
+trackValidatorsTrackingOnly += (
+    trackValidatorSeedingTrackingOnly +
+    trackValidatorBuildingTrackingOnly
+)
+trackValidatorsTrackingOnly.replace(trackValidatorConversionStandalone, trackValidatorConversionTrackingOnly)
+
+tracksValidationTrackingOnly = cms.Sequence(
+    tracksPreValidationTrackingOnly +
+    tracksValidationSelectorsStandalone +
+    tracksValidationSeedSelectorsTrackingOnly +
+    trackValidatorsTrackingOnly
 )

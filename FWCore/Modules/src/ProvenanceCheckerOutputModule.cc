@@ -106,7 +106,7 @@ namespace edm {
    void
    ProvenanceCheckerOutputModule::write(EventPrincipal const& e, ModuleCallingContext const* mcc) {
       //check ProductProvenance's parents to see if they are in the ProductProvenance list
-      std::shared_ptr<ProductProvenanceRetriever> mapperPtr = e.productProvenanceRetrieverPtr();
+      auto mapperPtr = e.productProvenanceRetrieverPtr();
 
       std::map<BranchID, bool> seenParentInPrincipal;
       std::set<BranchID> missingFromMapper;
@@ -118,7 +118,7 @@ namespace edm {
           ++it) {
         if(*it && (*it)->singleProduct()) {
             BranchID branchID = (*it)->branchDescription().branchID();
-            idToProductHolder[branchID] = (*it);
+            idToProductHolder[branchID] = get_underlying(*it);
             if((*it)->productUnavailable()) {
                //This call seems to have a side effect of filling the 'ProductProvenance' in the ProductHolder
               OutputHandle const oh = e.getForOutput(branchID, false, mcc);
