@@ -63,7 +63,7 @@ combinatoricRecoTaus.modifiers.append(cms.PSet(
 #------------------ HPS Taus ---------------------------------------------------
 #-------------------------------------------------------------------------------
 
-from RecoTauTag.Configuration.HPSPFTaus_cff import *
+from RecoTauTag.Configuration.HPSPFTaus_reminiAOD_cff import *
 
 combinatoricRecoTaus.chargedHadronSrc = cms.InputTag("ak4PFJetsRecoTauChargedHadrons")
 combinatoricRecoTaus.piZeroSrc = cms.InputTag("ak4PFJetsLegacyHPSPiZeros")
@@ -82,9 +82,9 @@ ak4PFJetTracksAssociatorAtVertex.jets = PFRecoTauPFJetInputs.inputJetCollection
 tautagInfoModifer = cms.PSet(
     name = cms.string("TTIworkaround"),
     plugin = cms.string("RecoTauTagInfoWorkaroundModifer"),
-    pfTauTagInfoSrc = cms.InputTag("pfRecoTauTagInfoProducer"),
+    pfTauTagInfoSrc = cms.InputTag("pfRecoTauTagInfoProducer76xReMiniAOD"),
 )
-combinatoricRecoTaus.modifiers.append(tautagInfoModifer)
+combinatoricRecoTaus76xReMiniAOD.modifiers.append(tautagInfoModifer76xReMiniAOD)
 
 recoTauPileUpVertices = cms.EDFilter("RecoTauPileUpVertexSelector",
     src = cms.InputTag("offlinePrimaryVertices"),
@@ -100,11 +100,11 @@ recoTauCommonSequence = cms.Sequence(
 )
 
 # Produce only classic HPS taus
-recoTauClassicHPSSequence = cms.Sequence(
-    ak4PFJetsLegacyHPSPiZeros *
-    ak4PFJetsRecoTauChargedHadrons *
-    combinatoricRecoTaus *
-    produceAndDiscriminateHPSPFTaus
+recoTauClassicHPSSequence76xReMiniAOD = cms.Sequence(
+    ak4PFJetsLegacyHPSPiZeros76xReMiniAOD *
+    ak4PFJetsRecoTauChargedHadrons76xReMiniAOD *
+    combinatoricRecoTaus76xReMiniAOD *
+    produceAndDiscriminateHPSPFTaus76xReMiniAOD
 )
 
 PFTau = cms.Sequence(

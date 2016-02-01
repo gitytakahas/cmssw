@@ -50,8 +50,8 @@ hpsPFTauDiscriminationByDecayModeFindingNewDMs = hpsSelectionDiscriminator.clone
     )
     #----------------------------------------------------------------------------
 )
-hpsPFTauDiscriminationByDecayModeFindingOldDMs = hpsSelectionDiscriminator.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByDecayModeFindingOldDMs76xReMiniAOD = hpsSelectionDiscriminator76xReMiniAOD.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     decayModes = cms.VPSet(
         decayMode_1Prong0Pi0,
         decayMode_1Prong1Pi0,
@@ -60,60 +60,60 @@ hpsPFTauDiscriminationByDecayModeFindingOldDMs = hpsSelectionDiscriminator.clone
     ),
     requireTauChargedHadronsToBeChargedPFCands = cms.bool(True)
 )
-hpsPFTauDiscriminationByDecayModeFinding = hpsPFTauDiscriminationByDecayModeFindingOldDMs.clone() # CV: kept for backwards compatibility
+hpsPFTauDiscriminationByDecayModeFinding76xReMiniAOD = hpsPFTauDiscriminationByDecayModeFindingOldDMs76xReMiniAOD.clone() # CV: kept for backwards compatibility
 
 # Define decay mode prediscriminant
-requireDecayMode = cms.PSet(
+requireDecayMode76xReMiniAOD = cms.PSet(
     BooleanOperator = cms.string("and"),
     decayMode = cms.PSet(
-        Producer = cms.InputTag('hpsPFTauDiscriminationByDecayModeFindingNewDMs'),
+        Producer = cms.InputTag('hpsPFTauDiscriminationByDecayModeFindingNewDMs76xReMiniAOD'),
         cut = cms.double(0.5)
     )
 )
 
 #Building the prototype for  the Discriminator by Isolation
-hpsPFTauDiscriminationByLooseIsolation = pfRecoTauDiscriminationByIsolation.clone(
-    PFTauProducer = cms.InputTag("hpsPFTauProducer"),
-    Prediscriminants = requireDecayMode.clone(),
+hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD = pfRecoTauDiscriminationByIsolation.clone(
+    PFTauProducer = cms.InputTag("hpsPFTauProducer76xReMiniAOD"),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
     ApplyDiscriminationByTrackerIsolation = False,
     ApplyDiscriminationByECALIsolation = True,
     applyOccupancyCut = True
 )
-hpsPFTauDiscriminationByLooseIsolation.Prediscriminants.preIso = cms.PSet(
-    Producer = cms.InputTag("hpsPFTauDiscriminationByLooseChargedIsolation"),
+hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD.Prediscriminants.preIso = cms.PSet(
+    Producer = cms.InputTag("hpsPFTauDiscriminationByLooseChargedIsolation76xReMiniAOD"),
     cut = cms.double(0.5))
 
 # Make an even looser discriminator
-hpsPFTauDiscriminationByVLooseIsolation = hpsPFTauDiscriminationByLooseIsolation.clone(
+hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD = hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD.clone(
     customOuterCone = cms.double(0.3),
     isoConeSizeForDeltaBeta = cms.double(0.3),
 )
-hpsPFTauDiscriminationByVLooseIsolation.qualityCuts.isolationQualityCuts.minTrackPt = 1.5
-hpsPFTauDiscriminationByVLooseIsolation.qualityCuts.isolationQualityCuts.minGammaEt = 2.0
-hpsPFTauDiscriminationByVLooseIsolation.Prediscriminants.preIso.Producer =  cms.InputTag("hpsPFTauDiscriminationByVLooseChargedIsolation")
+hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 1.5
+hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 2.0
+hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD.Prediscriminants.preIso.Producer =  cms.InputTag("hpsPFTauDiscriminationByVLooseChargedIsolation76xReMiniAOD")
 
-hpsPFTauDiscriminationByMediumIsolation = hpsPFTauDiscriminationByLooseIsolation.clone()
-hpsPFTauDiscriminationByMediumIsolation.qualityCuts.isolationQualityCuts.minTrackPt = 0.8
-hpsPFTauDiscriminationByMediumIsolation.qualityCuts.isolationQualityCuts.minGammaEt = 0.8
-hpsPFTauDiscriminationByMediumIsolation.Prediscriminants.preIso.Producer = cms.InputTag("hpsPFTauDiscriminationByMediumChargedIsolation")
+hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD = hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.8
+hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.8
+hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD.Prediscriminants.preIso.Producer = cms.InputTag("hpsPFTauDiscriminationByMediumChargedIsolation76xReMiniAOD")
 
-hpsPFTauDiscriminationByTightIsolation = hpsPFTauDiscriminationByLooseIsolation.clone()
-hpsPFTauDiscriminationByTightIsolation.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
-hpsPFTauDiscriminationByTightIsolation.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
-hpsPFTauDiscriminationByTightIsolation.Prediscriminants.preIso.Producer = cms.InputTag("hpsPFTauDiscriminationByTightChargedIsolation")
+hpsPFTauDiscriminationByTightIsolation76xReMiniAOD = hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD.clone()
+hpsPFTauDiscriminationByTightIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
+hpsPFTauDiscriminationByTightIsolation76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
+hpsPFTauDiscriminationByTightIsolation76xReMiniAOD.Prediscriminants.preIso.Producer = cms.InputTag("hpsPFTauDiscriminationByTightChargedIsolation76xReMiniAOD")
 
-hpsPFTauDiscriminationByIsolationSeq = cms.Sequence(
-    hpsPFTauDiscriminationByVLooseIsolation*
-    hpsPFTauDiscriminationByLooseIsolation*
-    hpsPFTauDiscriminationByMediumIsolation*
-    hpsPFTauDiscriminationByTightIsolation
+hpsPFTauDiscriminationByIsolationSeq76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByTightIsolation76xReMiniAOD
 )
 
 _isolation_types = ['VLoose', 'Loose', 'Medium', 'Tight']
 # Now build the sequences that apply PU corrections
 
 # Make Delta Beta corrections (on SumPt quantity)
-hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr = hpsPFTauDiscriminationByVLooseIsolation.clone(
+hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolation76xReMiniAOD.clone(
     deltaBetaPUTrackPtCutOverride = cms.double(0.5),
     applyDeltaBetaCorrection = True,
     isoConeSizeForDeltaBeta = 0.8,
@@ -121,9 +121,9 @@ hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr = hpsPFTauDiscriminationByVLo
     applyOccupancyCut = False,
     applySumPtCut = True,
 )
-hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr.maximumSumPtCut = hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt
+hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr76xReMiniAOD.maximumSumPtCut = hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt
 
-hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr = hpsPFTauDiscriminationByLooseIsolation.clone(
+hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByLooseIsolation76xReMiniAOD.clone(
     deltaBetaPUTrackPtCutOverride = cms.double(0.5),
     applyDeltaBetaCorrection = True,
     isoConeSizeForDeltaBeta = 0.8,
@@ -131,9 +131,9 @@ hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr = hpsPFTauDiscriminationByLoos
     applyOccupancyCut = False,
     applySumPtCut = True,
 )
-hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr.maximumSumPtCut = hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt
+hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr76xReMiniAOD.maximumSumPtCut = hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt
 
-hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr = hpsPFTauDiscriminationByMediumIsolation.clone(
+hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByMediumIsolation76xReMiniAOD.clone(
     deltaBetaPUTrackPtCutOverride = cms.double(0.5),
     applyDeltaBetaCorrection = True,
     isoConeSizeForDeltaBeta = 0.8,
@@ -141,9 +141,9 @@ hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr = hpsPFTauDiscriminationByMed
     applyOccupancyCut = False,
     applySumPtCut = True,
 )
-hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr.maximumSumPtCut = hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt
+hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr76xReMiniAOD.maximumSumPtCut = hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt
 
-hpsPFTauDiscriminationByTightIsolationDBSumPtCorr = hpsPFTauDiscriminationByTightIsolation.clone(
+hpsPFTauDiscriminationByTightIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByTightIsolation76xReMiniAOD.clone(
     deltaBetaPUTrackPtCutOverride = cms.double(0.5),
     applyDeltaBetaCorrection = True,
     isoConeSizeForDeltaBeta = 0.8,
@@ -151,192 +151,192 @@ hpsPFTauDiscriminationByTightIsolationDBSumPtCorr = hpsPFTauDiscriminationByTigh
     applyOccupancyCut = False,
     applySumPtCut = True,
 )
-hpsPFTauDiscriminationByTightIsolationDBSumPtCorr.maximumSumPtCut = hpsPFTauDiscriminationByTightIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt
+hpsPFTauDiscriminationByTightIsolationDBSumPtCorr76xReMiniAOD.maximumSumPtCut = hpsPFTauDiscriminationByTightIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt
 
-hpsPFTauDiscriminationByIsolationSeqDBSumPtCorr = cms.Sequence(
-    hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByTightIsolationDBSumPtCorr
+hpsPFTauDiscriminationByIsolationSeqDBSumPtCorr76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByTightIsolationDBSumPtCorr76xReMiniAOD
 )
 
-hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr = hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByTrackerIsolation = True,
     ApplyDiscriminationByECALIsolation = True,
     deltaBetaFactor = "%0.4f"%((0.09/0.25)*(ak4dBetaCorrection)),
     applyOccupancyCut = False,
     applySumPtCut = True,
     maximumSumPtCut = 3.5,
-    Prediscriminants = requireDecayMode.clone()
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone()
 )
-hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
-hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
+hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
+hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
 
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr = hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByLooseIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByTrackerIsolation = True,
     ApplyDiscriminationByECALIsolation = True,
     deltaBetaFactor = "%0.4f"%(ak4dBetaCorrection),
     applyOccupancyCut = False,
     applySumPtCut = True,
     maximumSumPtCut = 2.5,
-    Prediscriminants = requireDecayMode.clone()
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone()
 )
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
 
-hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     applySumPtCut = False,
     storeRawSumPt = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByRawChargedIsolationDBSumPtCorr = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByRawChargedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     applySumPtCut = False,
     ApplyDiscriminationByECALIsolation = False,
     storeRawSumPt = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByRawGammaIsolationDBSumPtCorr = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByRawGammaIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     applySumPtCut = False,
     ApplyDiscriminationByTrackerIsolation = False,
     storeRawSumPt = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr = hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByMediumIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByTrackerIsolation = True,
     ApplyDiscriminationByECALIsolation = True,
     deltaBetaFactor = "%0.4f"%(ak4dBetaCorrection),
     applyOccupancyCut = False,
     applySumPtCut = True,
     maximumSumPtCut = 1.5,
-    Prediscriminants = requireDecayMode.clone()
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone()
 )
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
 
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr = hpsPFTauDiscriminationByTightIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD = hpsPFTauDiscriminationByTightIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByTrackerIsolation = True,
     ApplyDiscriminationByECALIsolation = True,
     deltaBetaFactor = "%0.4f"%(ak4dBetaCorrection),
     applyOccupancyCut = False,
     applySumPtCut = True,
     maximumSumPtCut = 0.8,
-    Prediscriminants = requireDecayMode.clone()
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone()
 )
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackPt = 0.5
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD.qualityCuts.isolationQualityCuts.minGammaEt = 0.5
 
-hpsPFTauDiscriminationByCombinedIsolationSeqDBSumPtCorr = cms.Sequence(
-    hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr*
-    hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr
+hpsPFTauDiscriminationByCombinedIsolationSeqDBSumPtCorr76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD
 )
 
 #Charge isolation based on combined isolation
-hpsPFTauDiscriminationByVLooseChargedIsolation = hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByVLooseChargedIsolation76xReMiniAOD = hpsPFTauDiscriminationByVLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = False
 )
 
-hpsPFTauDiscriminationByLooseChargedIsolation = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByLooseChargedIsolation76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = False
 )
 
-hpsPFTauDiscriminationByMediumChargedIsolation = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByMediumChargedIsolation76xReMiniAOD = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = False
 )
-hpsPFTauDiscriminationByTightChargedIsolation = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr.clone(
+hpsPFTauDiscriminationByTightChargedIsolation76xReMiniAOD = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = False
 )
 
-hpsPFTauDiscriminationByChargedIsolationSeq = cms.Sequence(
-    hpsPFTauDiscriminationByVLooseChargedIsolation*
-    hpsPFTauDiscriminationByLooseChargedIsolation*
-    hpsPFTauDiscriminationByMediumChargedIsolation*
-    hpsPFTauDiscriminationByTightChargedIsolation
+hpsPFTauDiscriminationByChargedIsolationSeq76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByVLooseChargedIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByLooseChargedIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumChargedIsolation76xReMiniAOD*
+    hpsPFTauDiscriminationByTightChargedIsolation76xReMiniAOD
 )
 
 #copying discriminator against electrons and muons
-hpsPFTauDiscriminationByLooseElectronRejection = pfRecoTauDiscriminationAgainstElectron.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByLooseElectronRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstElectron.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     PFElectronMVA_maxValue = cms.double(0.6)
 )
-hpsPFTauDiscriminationByMediumElectronRejection = pfRecoTauDiscriminationAgainstElectron.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByMediumElectronRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstElectron.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     ApplyCut_EcalCrackCut = cms.bool(True)
 )
-hpsPFTauDiscriminationByTightElectronRejection = pfRecoTauDiscriminationAgainstElectron.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByTightElectronRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstElectron.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     ApplyCut_EcalCrackCut = cms.bool(True),
     ApplyCut_BremCombined = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByLooseMuonRejection = pfRecoTauDiscriminationAgainstMuon.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByLooseMuonRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstMuon.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants
 )
-hpsPFTauDiscriminationByMediumMuonRejection = pfRecoTauDiscriminationAgainstMuon.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByMediumMuonRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstMuon.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     discriminatorOption = cms.string('noAllArbitrated')
 )
-hpsPFTauDiscriminationByTightMuonRejection = pfRecoTauDiscriminationAgainstMuon.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByTightMuonRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstMuon.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     discriminatorOption = cms.string('noAllArbitratedWithHOP')
 )
 
-hpsPFTauDiscriminationByLooseMuonRejection2 = pfRecoTauDiscriminationAgainstMuon2.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByLooseMuonRejection276xReMiniAOD = pfRecoTauDiscriminationAgainstMuon2.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants
 )
-hpsPFTauDiscriminationByMediumMuonRejection2 = pfRecoTauDiscriminationAgainstMuon2.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByMediumMuonRejection276xReMiniAOD = pfRecoTauDiscriminationAgainstMuon2.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     discriminatorOption = cms.string('medium')
 )
-hpsPFTauDiscriminationByTightMuonRejection2 = pfRecoTauDiscriminationAgainstMuon2.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByTightMuonRejection276xReMiniAOD = pfRecoTauDiscriminationAgainstMuon2.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     discriminatorOption = cms.string('tight')
 )
 
-hpsPFTauDiscriminationByLooseMuonRejection3 = pfRecoTauDiscriminationAgainstMuon2.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
+hpsPFTauDiscriminationByLooseMuonRejection376xReMiniAOD = pfRecoTauDiscriminationAgainstMuon2.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
     Prediscriminants = noPrediscriminants,
     discriminatorOption = cms.string('custom'),
     maxNumberOfMatches = cms.int32(1),
     doCaloMuonVeto = cms.bool(True),
     maxNumberOfHitsLast2Stations = cms.int32(-1)
 )
-hpsPFTauDiscriminationByTightMuonRejection3 = hpsPFTauDiscriminationByLooseMuonRejection3.clone(
+hpsPFTauDiscriminationByTightMuonRejection376xReMiniAOD = hpsPFTauDiscriminationByLooseMuonRejection376xReMiniAOD.clone(
     maxNumberOfHitsLast2Stations = cms.int32(0)
 )
 
-hpsPFTauDiscriminationByMVArawMuonRejection = pfRecoTauDiscriminationAgainstMuonMVA.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),
+hpsPFTauDiscriminationByMVArawMuonRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstMuonMVA.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
     loadMVAfromDB = cms.bool(True),
     returnMVA = cms.bool(True),
     mvaName = cms.string("RecoTauTag_againstMuonMVAv1")
 )
-##hpsPFTauDiscriminationByMVALooseMuonRejection = hpsPFTauDiscriminationByMVArawMuonRejection.clone(
+##hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD = hpsPFTauDiscriminationByMVArawMuonRejection76xReMiniAOD.clone(
 ##    returnMVA = cms.bool(False),
 ##    mvaMin = cms.double(0.75)
 ##)
-##hpsPFTauDiscriminationByMVAMediumMuonRejection = hpsPFTauDiscriminationByMVALooseMuonRejection.clone(
+##hpsPFTauDiscriminationByMVAMediumMuonRejection76xReMiniAOD = hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD.clone(
 ##    mvaMin = cms.double(0.950)
 ##)
-##hpsPFTauDiscriminationByMVATightMuonRejection = hpsPFTauDiscriminationByMVALooseMuonRejection.clone(
+##hpsPFTauDiscriminationByMVATightMuonRejection76xReMiniAOD = hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD.clone(
 ##    mvaMin = cms.double(0.975)
 ##)
-hpsPFTauDiscriminationByMVALooseMuonRejection = recoTauDiscriminantCutMultiplexer.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),    
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByMVArawMuonRejection'),
-    key = cms.InputTag('hpsPFTauDiscriminationByMVArawMuonRejection:category'),
+hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD = recoTauDiscriminantCutMultiplexer.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),    
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByMVArawMuonRejection76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByMVArawMuonRejection76xReMiniAOD:category'),
     loadMVAfromDB = cms.bool(True),
     mvaOutput_normalization = cms.string("RecoTauTag_againstMuonMVAv1_mvaOutput_normalization"),
     mapping = cms.VPSet(
@@ -347,14 +347,14 @@ hpsPFTauDiscriminationByMVALooseMuonRejection = recoTauDiscriminantCutMultiplexe
         )
     )
 )
-hpsPFTauDiscriminationByMVAMediumMuonRejection = hpsPFTauDiscriminationByMVALooseMuonRejection.clone()
-hpsPFTauDiscriminationByMVAMediumMuonRejection.mapping[0].cut = cms.string("RecoTauTag_againstMuonMVAv1_WPeff99_0")
-hpsPFTauDiscriminationByMVATightMuonRejection = hpsPFTauDiscriminationByMVALooseMuonRejection.clone()
-hpsPFTauDiscriminationByMVATightMuonRejection.mapping[0].cut = cms.string("RecoTauTag_againstMuonMVAv1_WPeff98_0")
+hpsPFTauDiscriminationByMVAMediumMuonRejection76xReMiniAOD = hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMVAMediumMuonRejection76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_againstMuonMVAv1_WPeff99_0")
+hpsPFTauDiscriminationByMVATightMuonRejection76xReMiniAOD = hpsPFTauDiscriminationByMVALooseMuonRejection76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMVATightMuonRejection76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_againstMuonMVAv1_WPeff98_0")
 
-hpsPFTauDiscriminationByMVA5rawElectronRejection = pfRecoTauDiscriminationAgainstElectronMVA5.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),
+hpsPFTauDiscriminationByMVA5rawElectronRejection76xReMiniAOD = pfRecoTauDiscriminationAgainstElectronMVA5.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
     loadMVAfromDB = cms.bool(True),
     mvaName_NoEleMatch_woGwoGSF_BL = cms.string("RecoTauTag_antiElectronMVA5v1_gbr_NoEleMatch_woGwoGSF_BL"),
     mvaName_NoEleMatch_woGwGSF_BL = cms.string("RecoTauTag_antiElectronMVA5v1_gbr_NoEleMatch_woGwGSF_BL"),
@@ -374,11 +374,11 @@ hpsPFTauDiscriminationByMVA5rawElectronRejection = pfRecoTauDiscriminationAgains
     mvaName_wGwGSF_EC = cms.string("RecoTauTag_antiElectronMVA5v1_gbr_wGwGSF_EC")
 )
 
-hpsPFTauDiscriminationByMVA5VLooseElectronRejection = recoTauDiscriminantCutMultiplexer.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByMVA5rawElectronRejection'),
-    key = cms.InputTag('hpsPFTauDiscriminationByMVA5rawElectronRejection:category'),
+hpsPFTauDiscriminationByMVA5VLooseElectronRejection76xReMiniAOD = recoTauDiscriminantCutMultiplexer.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByMVA5rawElectronRejection76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByMVA5rawElectronRejection76xReMiniAOD:category'),
     loadMVAfromDB = cms.bool(True),
     mapping = cms.VPSet(
         cms.PSet(
@@ -646,27 +646,44 @@ hpsPFTauDiscriminationByDeadECALElectronRejection = pfRecoTauDiscriminationAgain
 )
 
 #Define new sequence that is using smaller number on hits cut
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr.clone()
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr.clone()
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr.clone()
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr76xReMiniAOD.clone()
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr76xReMiniAOD.clone()
 
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
-hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
-hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
-hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(3)
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)
 
-hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits.clone(
+hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.clone(
     applySumPtCut = False,
     storeRawSumPt = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByCombinedIsolationSeqDBSumPtCorr3Hits = cms.Sequence(
-    hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits*
-    hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits*
-    hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits*
-    hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits
+hpsPFTauDiscriminationByCombinedIsolationSeqDBSumPtCorr3Hits76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD
+)
+
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.clone()
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.clone()
+
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.deltaBetaFactor = cms.string('0.0720') # 0.2*(0.3/0.5)^2
+hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.customOuterCone = cms.double(0.3)
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.deltaBetaFactor = cms.string('0.0720') # 0.2*(0.3/0.5)^2
+hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.customOuterCone = cms.double(0.3)
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.deltaBetaFactor = cms.string('0.0720') # 0.2*(0.3/0.5)^2
+hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD.customOuterCone = cms.double(0.3)
+
+hpsPFTauDiscriminationByCombinedIsolationSeqDBSumPtCorr3HitsdR0376xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD*
+    hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD*
+    hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3HitsdR0376xReMiniAOD
 )
 
 hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3HitsdR03 = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits.clone()
@@ -695,23 +712,23 @@ hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits = hpsPFTauDiscriminati
     applyPhotonPtSumOutsideSignalConeCut = cms.bool(True)    
 )
 
-hpsPFTauDiscriminationByMediumPileupWeightedIsolation3Hits = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits.clone(
-    maximumSumPtCut = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits.maximumSumPtCut
+hpsPFTauDiscriminationByMediumPileupWeightedIsolation3Hits76xReMiniAOD = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits76xReMiniAOD.clone(
+    maximumSumPtCut = hpsPFTauDiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.maximumSumPtCut
 )
 
-hpsPFTauDiscriminationByTightPileupWeightedIsolation3Hits = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits.clone(
-    maximumSumPtCut = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits.maximumSumPtCut
+hpsPFTauDiscriminationByTightPileupWeightedIsolation3Hits76xReMiniAOD = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits76xReMiniAOD.clone(
+    maximumSumPtCut = hpsPFTauDiscriminationByTightCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.maximumSumPtCut
 )
 
-hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits.clone(
+hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone76xReMiniAOD = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits76xReMiniAOD.clone(
     applySumPtCut = cms.bool(False)
 )
 
-hpsPFTauDiscriminationByRawPileupWeightedIsolation3Hits = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits.clone(
+hpsPFTauDiscriminationByRawPileupWeightedIsolation3Hits76xReMiniAOD = hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits76xReMiniAOD.clone(
     Prediscriminants = cms.PSet(
         BooleanOperator = cms.string("and"),
         decayMode = cms.PSet(
-            Producer = cms.InputTag('hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone'),
+            Producer = cms.InputTag('hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone76xReMiniAOD'),
             cut = cms.double(0.5)
         )
     ),
@@ -719,12 +736,12 @@ hpsPFTauDiscriminationByRawPileupWeightedIsolation3Hits = hpsPFTauDiscrimination
     storeRawSumPt = cms.bool(True)
 )
 
-hpsPFTauDiscriminationByPileupWeightedIsolationSeq3Hits = cms.Sequence(
-    hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits*
-    hpsPFTauDiscriminationByMediumPileupWeightedIsolation3Hits*
-    hpsPFTauDiscriminationByTightPileupWeightedIsolation3Hits*
-    hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone*
-    hpsPFTauDiscriminationByRawPileupWeightedIsolation3Hits
+hpsPFTauDiscriminationByPileupWeightedIsolationSeq3Hits76xReMiniAOD = cms.Sequence(
+    hpsPFTauDiscriminationByLoosePileupWeightedIsolation3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByMediumPileupWeightedIsolation3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByTightPileupWeightedIsolation3Hits76xReMiniAOD*
+    hpsPFTauDiscriminationByPhotonPtSumOutsideSignalCone76xReMiniAOD*
+    hpsPFTauDiscriminationByRawPileupWeightedIsolation3Hits76xReMiniAOD
 )
 
 # Define the HPS selection discriminator used in cleaning
@@ -742,21 +759,21 @@ hpsSelectionDiscriminator.decayModes = cms.VPSet(
 #----------------------------------------------------------------------------
 
 from RecoTauTag.RecoTau.RecoTauCleaner_cfi import RecoTauCleaner
-hpsPFTauProducerSansRefs = RecoTauCleaner.clone(
-    src = cms.InputTag("combinatoricRecoTaus")
+hpsPFTauProducerSansRefs76xReMiniAOD = RecoTauCleaner.clone(
+    src = cms.InputTag("combinatoricRecoTaus76xReMiniAOD")
 )
 hpsPFTauProducerSansRefs.cleaners[1].src = cms.InputTag("hpsSelectionDiscriminator")
 
 from RecoTauTag.RecoTau.RecoTauPiZeroUnembedder_cfi import RecoTauPiZeroUnembedder
-hpsPFTauProducer = RecoTauPiZeroUnembedder.clone(
-    src = cms.InputTag("hpsPFTauProducerSansRefs")
+hpsPFTauProducer76xReMiniAOD = RecoTauPiZeroUnembedder.clone(
+    src = cms.InputTag("hpsPFTauProducerSansRefs76xReMiniAOD")
 )
 
 from RecoTauTag.RecoTau.PFTauPrimaryVertexProducer_cfi      import *
 from RecoTauTag.RecoTau.PFTauSecondaryVertexProducer_cfi    import *
 from RecoTauTag.RecoTau.PFTauTransverseImpactParameters_cfi import *
-hpsPFTauPrimaryVertexProducer = PFTauPrimaryVertexProducer.clone(
-    PFTauTag = cms.InputTag("hpsPFTauProducer"),
+hpsPFTauPrimaryVertexProducer76xReMiniAOD = PFTauPrimaryVertexProducer.clone(
+    PFTauTag = cms.InputTag("hpsPFTauProducer76xReMiniAOD"),
     ElectronTag = cms.InputTag(""),
     MuonTag = cms.InputTag(""),
     PVTag = cms.InputTag("offlinePrimaryVertices"),
@@ -769,15 +786,15 @@ hpsPFTauPrimaryVertexProducer = PFTauPrimaryVertexProducer.clone(
     useSelectedTaus = cms.bool(False),
     discriminators = cms.VPSet(
         cms.PSet(
-            discriminator = cms.InputTag('hpsPFTauDiscriminationByDecayModeFindingNewDMs'),
+            discriminator = cms.InputTag('hpsPFTauDiscriminationByDecayModeFindingNewDMs76xReMiniAOD'),
             selectionCut = cms.double(0.5)
         )
     ),
     cut = cms.string("pt > 18.0 & abs(eta) < 2.4")
 )
 
-hpsPFTauSecondaryVertexProducer = PFTauSecondaryVertexProducer.clone(
-    PFTauTag = cms.InputTag("hpsPFTauProducer")
+hpsPFTauSecondaryVertexProducer76xReMiniAOD = PFTauSecondaryVertexProducer.clone(
+    PFTauTag = cms.InputTag("hpsPFTauProducer76xReMiniAOD")
 )
 hpsPFTauTransverseImpactParameters = PFTauTransverseImpactParameters.clone(
     PFTauTag = cms.InputTag("hpsPFTauProducer"),
@@ -785,16 +802,16 @@ hpsPFTauTransverseImpactParameters = PFTauTransverseImpactParameters.clone(
     PFTauSVATag = cms.InputTag("hpsPFTauSecondaryVertexProducer"),
     useFullCalculation = cms.bool(True)
 )
-hpsPFTauVertexAndImpactParametersSeq = cms.Sequence(
-    hpsPFTauPrimaryVertexProducer*
-    hpsPFTauSecondaryVertexProducer*
-    hpsPFTauTransverseImpactParameters
+hpsPFTauVertexAndImpactParametersSeq76xReMiniAOD = cms.Sequence(
+    hpsPFTauPrimaryVertexProducer76xReMiniAOD*
+    hpsPFTauSecondaryVertexProducer76xReMiniAOD*
+    hpsPFTauTransverseImpactParameters76xReMiniAOD
 )
 
 from RecoTauTag.RecoTau.PFRecoTauDiscriminationByMVAIsolation2_cff import *
-hpsPFTauChargedIsoPtSum = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),
+hpsPFTauChargedIsoPtSum76xReMiniAOD = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits76xReMiniAOD.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
     ApplyDiscriminationByECALIsolation = cms.bool(False),
     ApplyDiscriminationByTrackerIsolation = cms.bool(True),
     applySumPtCut = cms.bool(False),
@@ -805,12 +822,12 @@ hpsPFTauChargedIsoPtSum = hpsPFTauDiscriminationByLooseCombinedIsolationDBSumPtC
     isoConeSizeForDeltaBeta = cms.double(0.8),
     verbosity = cms.int32(0)
 )
-hpsPFTauNeutralIsoPtSum = hpsPFTauChargedIsoPtSum.clone(
+hpsPFTauNeutralIsoPtSum76xReMiniAOD = hpsPFTauChargedIsoPtSum76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = cms.bool(True),
     ApplyDiscriminationByTrackerIsolation = cms.bool(False),
     verbosity = cms.int32(0)
 )
-hpsPFTauPUcorrPtSum = hpsPFTauChargedIsoPtSum.clone(
+hpsPFTauPUcorrPtSum76xReMiniAOD = hpsPFTauChargedIsoPtSum76xReMiniAOD.clone(
     ApplyDiscriminationByECALIsolation = cms.bool(False),
     ApplyDiscriminationByTrackerIsolation = cms.bool(False),
     applyDeltaBetaCorrection = cms.bool(True),
@@ -818,42 +835,42 @@ hpsPFTauPUcorrPtSum = hpsPFTauChargedIsoPtSum.clone(
     storeRawPUsumPt = cms.bool(True),
     verbosity = cms.int32(0)
 )
-hpsPFTauNeutralIsoPtSumWeight = hpsPFTauChargedIsoPtSum.clone(
+hpsPFTauNeutralIsoPtSumWeight76xReMiniAOD = hpsPFTauChargedIsoPtSum76xReMiniAOD.clone(
     ApplyDiscriminationByWeightedECALIsolation = cms.bool(True),
     ApplyDiscriminationByTrackerIsolation = cms.bool(False),
     UseAllPFCandsForWeights = cms.bool(True),
     verbosity = cms.int32(0)
 )
-hpsPFTauFootprintCorrection = hpsPFTauChargedIsoPtSum.clone(    
+hpsPFTauFootprintCorrection76xReMiniAOD = hpsPFTauChargedIsoPtSum76xReMiniAOD.clone(    
     ApplyDiscriminationByTrackerIsolation = cms.bool(False),
     storeRawSumPt = cms.bool(False),
     storeRawFootprintCorrection = cms.bool(True),
     verbosity = cms.int32(0)
 )
-hpsPFTauPhotonPtSumOutsideSignalCone = hpsPFTauChargedIsoPtSum.clone(    
+hpsPFTauPhotonPtSumOutsideSignalCone76xReMiniAOD = hpsPFTauChargedIsoPtSum76xReMiniAOD.clone(    
     ApplyDiscriminationByTrackerIsolation = cms.bool(False),
     storeRawSumPt = cms.bool(False),
     storeRawPhotonSumPt_outsideSignalCone = cms.bool(True),
     verbosity = cms.int32(0)
 )
 
-hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw = discriminationByIsolationMVA2raw.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),
+hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw76xReMiniAOD = discriminationByIsolationMVA2raw.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),
     loadMVAfromDB = cms.bool(True),
     mvaName = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1"),
     mvaOpt = cms.string("oldDMwoLT"),
-    srcTauTransverseImpactParameters = cms.InputTag('hpsPFTauTransverseImpactParameters'),    
-    srcChargedIsoPtSum = cms.InputTag('hpsPFTauChargedIsoPtSum'),
-    srcNeutralIsoPtSum = cms.InputTag('hpsPFTauNeutralIsoPtSum'),
-    srcPUcorrPtSum = cms.InputTag('hpsPFTauPUcorrPtSum'),
+    srcTauTransverseImpactParameters = cms.InputTag('hpsPFTauTransverseImpactParameters76xReMiniAOD'),    
+    srcChargedIsoPtSum = cms.InputTag('hpsPFTauChargedIsoPtSum76xReMiniAOD'),
+    srcNeutralIsoPtSum = cms.InputTag('hpsPFTauNeutralIsoPtSum76xReMiniAOD'),
+    srcPUcorrPtSum = cms.InputTag('hpsPFTauPUcorrPtSum76xReMiniAOD'),
     verbosity = cms.int32(0)
 )
-hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT = discriminationByIsolationMVA2VLoose.clone(
-    PFTauProducer = cms.InputTag('hpsPFTauProducer'),
-    Prediscriminants = requireDecayMode.clone(),    
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw'),
-    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw:category'),
+hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD = discriminationByIsolationMVA2VLoose.clone(
+    PFTauProducer = cms.InputTag('hpsPFTauProducer76xReMiniAOD'),
+    Prediscriminants = requireDecayMode76xReMiniAOD.clone(),    
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw76xReMiniAOD:category'),
     loadMVAfromDB = cms.bool(True),
     mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_mvaOutput_normalization"),
     mapping = cms.VPSet(
@@ -864,24 +881,24 @@ hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT = discriminationByIsolation
         )
     )
 )
-hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone()
-hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwoLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff80")
-hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone()
-hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwoLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff70")
-hpsPFTauDiscriminationByTightIsolationMVA3oldDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone()
-hpsPFTauDiscriminationByTightIsolationMVA3oldDMwoLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff60")
-hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone()
-hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwoLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff50")
-hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone()
-hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwoLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff40")
-hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw = hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw.clone(
+hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwoLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff80")
+hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwoLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff70")
+hpsPFTauDiscriminationByTightIsolationMVA3oldDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByTightIsolationMVA3oldDMwoLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff60")
+hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwoLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff50")
+hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwoLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwoLTv1_WPEff40")
+hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw76xReMiniAOD = hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw76xReMiniAOD.clone(
     mvaName = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1"),
     mvaOpt = cms.string("oldDMwLT"),
     verbosity = cms.int32(0)
 )
-hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone(
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw'),
-    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw:category'),
+hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone(
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3oldDMwLTraw76xReMiniAOD:category'),
     mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_mvaOutput_normalization"),
     mapping = cms.VPSet(
         cms.PSet(
@@ -891,24 +908,24 @@ hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVL
         )
     )
 )
-hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT.clone()
-hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff80")
-hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT.clone()
-hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff70")
-hpsPFTauDiscriminationByTightIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT.clone()
-hpsPFTauDiscriminationByTightIsolationMVA3oldDMwLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff60")
-hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT.clone()
-hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff50")
-hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT.clone()
-hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwLT.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff40")
-hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw = hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw.clone(
+hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByLooseIsolationMVA3oldDMwLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff80")
+hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByMediumIsolationMVA3oldDMwLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff70")
+hpsPFTauDiscriminationByTightIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByTightIsolationMVA3oldDMwLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff60")
+hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByVTightIsolationMVA3oldDMwLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff50")
+hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwLT76xReMiniAOD.clone()
+hpsPFTauDiscriminationByVVTightIsolationMVA3oldDMwLT76xReMiniAOD.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAoldDMwLTv1_WPEff40")
+hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw76xReMiniAOD = hpsPFTauDiscriminationByIsolationMVA3oldDMwoLTraw76xReMiniAOD.clone(
     mvaName = cms.string("RecoTauTag_tauIdMVAnewDMwoLTv1"),
     mvaOpt = cms.string("newDMwoLT"),
     verbosity = cms.int32(0)
 )
-hpsPFTauDiscriminationByVLooseIsolationMVA3newDMwoLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone(
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw'),
-    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw:category'),
+hpsPFTauDiscriminationByVLooseIsolationMVA3newDMwoLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone(
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwoLTraw76xReMiniAOD:category'),
     mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAnewDMwoLTv1_mvaOutput_normalization"),
     mapping = cms.VPSet(
         cms.PSet(
@@ -934,9 +951,9 @@ hpsPFTauDiscriminationByIsolationMVA3newDMwLTraw = hpsPFTauDiscriminationByIsola
     mvaOpt = cms.string("newDMwLT"),
     verbosity = cms.int32(0)
 )
-hpsPFTauDiscriminationByVLooseIsolationMVA3newDMwLT = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT.clone(
-    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwLTraw'),
-    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwLTraw:category'),
+hpsPFTauDiscriminationByVLooseIsolationMVA3newDMwLT76xReMiniAOD = hpsPFTauDiscriminationByVLooseIsolationMVA3oldDMwoLT76xReMiniAOD.clone(
+    toMultiplex = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwLTraw76xReMiniAOD'),
+    key = cms.InputTag('hpsPFTauDiscriminationByIsolationMVA3newDMwLTraw76xReMiniAOD:category'),
     mvaOutput_normalization = cms.string("RecoTauTag_tauIdMVAnewDMwLTv1_mvaOutput_normalization"),
     mapping = cms.VPSet(
         cms.PSet(
@@ -1288,26 +1305,26 @@ hpsPFTauMVAIsolation2Seq = cms.Sequence(
    + hpsPFTauDiscriminationByVVTightIsolationMVArun2v1PWdR03oldDMwLT
 )    
 
-produceHPSPFTaus = cms.Sequence(
-    hpsSelectionDiscriminator
-    #*hpsTightIsolationCleaner
-    #*hpsMediumIsolationCleaner
-    #*hpsLooseIsolationCleaner
-    #*hpsVLooseIsolationCleaner
-    *hpsPFTauProducerSansRefs
-    *hpsPFTauProducer
+produceHPSPFTaus76xReMiniAOD = cms.Sequence(
+    hpsSelectionDiscriminator76xReMiniAOD
+    #*hpsTightIsolationCleaner76xReMiniAOD
+    #*hpsMediumIsolationCleaner76xReMiniAOD
+    #*hpsLooseIsolationCleaner76xReMiniAOD
+    #*hpsVLooseIsolationCleaner76xReMiniAOD
+    *hpsPFTauProducerSansRefs76xReMiniAOD
+    *hpsPFTauProducer76xReMiniAOD
 )
 
-produceAndDiscriminateHPSPFTaus = cms.Sequence(
-    produceHPSPFTaus*
-    hpsPFTauDiscriminationByDecayModeFindingNewDMs*
-    hpsPFTauDiscriminationByDecayModeFindingOldDMs*
-    hpsPFTauDiscriminationByDecayModeFinding* # CV: kept for backwards compatibility
-    hpsPFTauDiscriminationByChargedIsolationSeq*
-    hpsPFTauDiscriminationByIsolationSeq*
-    #hpsPFTauDiscriminationByIsolationSeqRhoCorr*
-    #hpsPFTauDiscriminationByIsolationSeqCustomRhoCorr*
-    hpsPFTauDiscriminationByIsolationSeqDBSumPtCorr*
+produceAndDiscriminateHPSPFTaus76xReMiniAOD = cms.Sequence(
+    produceHPSPFTaus76xReMiniAOD*
+    hpsPFTauDiscriminationByDecayModeFindingNewDMs76xReMiniAOD*
+    hpsPFTauDiscriminationByDecayModeFindingOldDMs76xReMiniAOD*
+    hpsPFTauDiscriminationByDecayModeFinding76xReMiniAOD* # CV: kept for backwards compatibility
+    hpsPFTauDiscriminationByChargedIsolationSeq76xReMiniAOD*
+    hpsPFTauDiscriminationByIsolationSeq76xReMiniAOD*
+    #hpsPFTauDiscriminationByIsolationSeqRhoCorr76xReMiniAOD*
+    #hpsPFTauDiscriminationByIsolationSeqCustomRhoCorr76xReMiniAOD*
+    hpsPFTauDiscriminationByIsolationSeqDBSumPtCorr76xReMiniAOD*
     
     hpsPFTauDiscriminationByRawCombinedIsolationDBSumPtCorr*
     hpsPFTauDiscriminationByRawChargedIsolationDBSumPtCorr*

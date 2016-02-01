@@ -169,6 +169,7 @@ RecoTauTagRECO = cms.PSet(
         'keep *_hpsPFTauDiscriminationByTightIsolationMVArun2v1PWdR03oldDMwLT_*_*',
         'keep *_hpsPFTauDiscriminationByVTightIsolationMVArun2v1PWdR03oldDMwLT_*_*',
         'keep *_hpsPFTauDiscriminationByVVTightIsolationMVArun2v1PWdR03oldDMwLT_*_*'
+        'keep *_hpsPFTauPhotonPtSumOutsideSignalCone_*_*'
     )
 )
 #AOD content
