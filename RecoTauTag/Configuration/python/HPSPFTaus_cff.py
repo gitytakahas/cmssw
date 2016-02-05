@@ -3,7 +3,7 @@ import copy
 
 '''
 
-Sequences for HPS taus (commit test)
+Sequences for HPS taus
 
 '''
 
