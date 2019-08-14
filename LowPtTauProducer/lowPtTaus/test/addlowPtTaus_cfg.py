@@ -48,7 +48,7 @@ process.lowPtTaus = cms.EDProducer('lowPtTaus',
 
 
 process.out = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('file:/tmp/ytakahas/myOutputFile.root'),
+    fileName = cms.untracked.string('file:myOutputFile.root'),
 #    outputCommands = cms.untracked.vstring('drop *',
 #      "keep *_generalTracks_*_*",
 #      "keep *_globalMuons_*_*",
