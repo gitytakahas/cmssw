@@ -53,15 +53,16 @@ private:
 
   FloatArrays data_;
 
-  bool debug_ = false;
+  bool debug_ = true;
 };
 
 BoostedJetONNXJetTagsProducer::BoostedJetONNXJetTagsProducer(const edm::ParameterSet &iConfig, const ONNXRuntime *cache)
     : src_(consumes<TagInfoCollection>(iConfig.getParameter<edm::InputTag>("src"))),
       flav_names_(iConfig.getParameter<std::vector<std::string>>("flav_names")),
-      debug_(iConfig.getUntrackedParameter<bool>("debugMode", false)) {
+      debug_(iConfig.getUntrackedParameter<bool>("debugMode", true)) {
   ParticleNetConstructor(iConfig, true, input_names_, prep_info_map_, input_shapes_, input_sizes_, &data_);
 
+  debug_ = true;
   if (debug_) {
     LogDebug("BoostedJetONNXJetTagsProducer") << "<BoostedJetONNXJetTagsProducer::produce>:" << std::endl;
     for (unsigned i = 0; i < input_names_.size(); ++i) {
@@ -139,7 +140,6 @@ void BoostedJetONNXJetTagsProducer::globalEndJob(const ONNXRuntime *cache) {}
 void BoostedJetONNXJetTagsProducer::produce(edm::Event &iEvent, const edm::EventSetup &iSetup) {
   edm::Handle<TagInfoCollection> tag_infos;
   iEvent.getByToken(src_, tag_infos);
-
   // initialize output collection
   std::vector<std::unique_ptr<JetTagCollection>> output_tags;
   if (!tag_infos->empty()) {
@@ -171,7 +171,7 @@ void BoostedJetONNXJetTagsProducer::produce(edm::Event &iEvent, const edm::Event
       (*(output_tags[flav_n]))[jet_ref] = outputs[flav_n];
     }
   }
-
+  debug_= true;
   if (debug_) {
     LogDebug("produce") << "<BoostedJetONNXJetTagsProducer::produce>:" << std::endl
                         << "=== " << iEvent.id().run() << ":" << iEvent.id().luminosityBlock() << ":"
@@ -222,6 +222,7 @@ void BoostedJetONNXJetTagsProducer::make_inputs(const reco::DeepBoostedJetTagInf
       if (i == 0 && (!input_shapes_.empty())) {
         input_shapes_[igroup][2] = insize;
       }
+
 
       if (debug_) {
         LogDebug("make_inputs") << "<BoostedJetONNXJetTagsProducer::make_inputs>:" << std::endl

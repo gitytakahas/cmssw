@@ -8,17 +8,18 @@ from RecoBTag.ONNXRuntime.pfParticleNetFromMiniAODAK4DiscriminatorsJetTags_cfi i
 pfParticleNetFromMiniAODAK4CHSCentralTagInfos = ParticleNetFeatureEvaluator.clone(
     jets = "slimmedJets",
     jet_radius = 0.4,
-    min_jet_pt = 15,
+    min_jet_pt = 0.,
     min_jet_eta = 0.,
     max_jet_eta = 2.5,
 )
 
+### hacked the forward pNet
 pfParticleNetFromMiniAODAK4CHSForwardTagInfos = ParticleNetFeatureEvaluator.clone(
     jets = "slimmedJets",
     jet_radius = 0.4,
-    min_jet_pt = 15,
-    min_jet_eta = 2.5,
-    max_jet_eta = 4.7,
+    min_jet_pt = 0.,
+    min_jet_eta = 0.,
+    max_jet_eta = 2.5,
 )
 
 pfParticleNetFromMiniAODAK4PuppiCentralTagInfos = ParticleNetFeatureEvaluator.clone(
@@ -47,9 +48,11 @@ pfParticleNetFromMiniAODAK4CHSCentralJetTags = boostedJetONNXJetTagsProducer.clo
 
 pfParticleNetFromMiniAODAK4CHSForwardJetTags = boostedJetONNXJetTagsProducer.clone(
     src = 'pfParticleNetFromMiniAODAK4CHSForwardTagInfos',
-    preprocess_json = 'RecoBTag/Combined/data/ParticleNetFromMiniAODAK4/CHS/Forward/preprocess.json',
-    model_path = 'RecoBTag/Combined/data/ParticleNetFromMiniAODAK4/CHS/Forward/particle-net.onnx',
-    flav_names = ['probq','probg','ptcorr','ptreshigh','ptreslow','ptnu'],
+    preprocess_json = 'data/preprocess.json',
+    #preprocess_json = '/afs/cern.ch/work/f/friti/BsTauTau/make_samples/nano_with_part_branch/CMSSW_13_0_10/src/data/preprocess.json',
+    model_path = 'data/model_6026222.onnx',
+    #model_path = '/afs/cern.ch/work/f/friti/BsTauTau/make_samples/nano_with_part_branch/CMSSW_13_0_10/src/data/model_6026222.onnx',
+    flav_names = ['probtauhtauh','probtauhtaumu','probtauhtaue','probsingletau','probb','probc','probother'],
 )
 
 pfParticleNetFromMiniAODAK4PuppiCentralJetTags = boostedJetONNXJetTagsProducer.clone(

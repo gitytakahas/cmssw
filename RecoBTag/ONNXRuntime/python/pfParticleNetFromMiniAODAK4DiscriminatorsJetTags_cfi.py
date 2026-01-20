@@ -296,16 +296,54 @@ pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags = cms.EDProducer(
 pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags = cms.EDProducer(
    'BTagProbabilityToDiscriminator',
    discriminators = cms.VPSet(
-      cms.PSet(
-         name = cms.string('QvsG'),
-         numerator = cms.VInputTag(
-            cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probq'),
-            ),
-         denominator = cms.VInputTag(
-            cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probq'),
-            cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probg'),
-            ),
-         ),
-
-      )
+       cms.PSet(
+           name = cms.string('tauhtauh'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probtauhtauh'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('tauhtaue'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probtauhtaue'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('tauhtaumu'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probtauhtaumu'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('singletauh'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probsingletau'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('b'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probb'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('c'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probc'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
+       cms.PSet(
+           name = cms.string('other'),
+           numerator = cms.VInputTag(
+               cms.InputTag('pfParticleNetFromMiniAODAK4CHSForwardJetTags', 'probother'),
+           ),
+           denominator = cms.VInputTag(),
+       ),
    )
+)

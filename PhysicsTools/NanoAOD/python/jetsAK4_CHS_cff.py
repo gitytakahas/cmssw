@@ -106,7 +106,8 @@ updatedJetsWithUserData = cms.EDProducer("PATJetUserDataEmbedder",
 
 finalJets = cms.EDFilter("PATJetRefSelector",
     src = cms.InputTag("updatedJetsWithUserData"),
-    cut = cms.string("pt > 15")
+    cut = cms.string("pt > 5")
+    #cut = cms.string("pt > 15")
 )
 
 
@@ -154,6 +155,13 @@ jetTable = simpleCandidateFlatTableProducer.clone(
                                   float,
                                   doc="RobustParTAK4 g vs uds discriminator",
                                   precision=10),
+        myParTRawTauhtauh = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtauh')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtauh'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawTauhtaumu = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtaumu')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtaumu'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawTauhtaue = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtaue')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:tauhtaue'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawSingletau = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:singletauh')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:singletauh'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:b')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:b'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawC = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:c')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:c'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
+        myParTRawOther = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:other')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSForwardDiscriminatorsJetTags:other'):-1",float,precision=10,doc="ParticleNet tauhtauh raw score"),
         btagPNetB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll'):-1",float,precision=10,doc="ParticleNet b vs. udscg"),
         btagPNetCvL = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:CvsL')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:CvsL'):-1",float,precision=10,doc="ParticleNet c vs. udsg"),
         btagPNetCvB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:CvsB')>0?bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:CvsB'):-1",float,precision=10,doc="ParticleNet c vs. b"),

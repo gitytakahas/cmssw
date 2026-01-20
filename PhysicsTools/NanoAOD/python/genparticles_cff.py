@@ -9,7 +9,8 @@ finalGenParticles = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("prunedGenParticles"),
     select = cms.vstring(
 	"drop *",
-        "keep++ abs(pdgId) == 15 & (pt > 15 ||  isPromptDecayed() )",#  keep full tau decay chain for some taus
+        "keep++ abs(pdgId) == 15 & (pt > 5 ||  isPromptDecayed() )",#  keep full tau decay chain for some taus
+        #"keep++ abs(pdgId) == 15 & (pt > 15 ||  isPromptDecayed() )",#  keep full tau decay chain for some taus
 	#"drop status==1 & pt < 1", #drop soft stable particle in tau decay
         "keep+ abs(pdgId) == 15 ",  #  keep first gen decay product for all tau
         "+keep pdgId == 22 && status == 1 && (pt > 10 || isPromptFinalState())", # keep gamma above 10 GeV (or all prompt) and its first parent
