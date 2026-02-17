@@ -7,6 +7,18 @@
 <use name="FWCore/ServiceRegistry"/>
 <use name="PhysicsTools/PatUtils"/>
 <use name="PhysicsTools/UtilAlgos"/>
+<use name="TrackingTools/TransientTrack"/>
+<use name="TrackingTools/Records"/>
+<use name="RecoVertex/KalmanVertexFit"/>
+<use name="RecoVertex/VertexPrimitives"/>
+<use name="RecoVertex/VertexTools"/>
+<use name="CommonTools/CandUtils"/>
+<use name="TrackingTools/IPTools"/>
+<use name="TrackingTools/PatternTools"/>
+<use name="TrackingTools/GeomPropagators"/>
+<use name="RecoVertex/AdaptiveVertexFit"/>
+<use name="RecoVertex/KinematicFit"/>
+<use name="RecoVertex/KinematicFitPrimitives"/>
 <use name="clhep"/>
 <export>
   <lib name="1"/>
